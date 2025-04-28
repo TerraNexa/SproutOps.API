@@ -1,4 +1,4 @@
-import * as cdk from "aws-cdk-lib";
+import { Stack, StackProps } from "aws-cdk-lib";
 import {
   AttributeType,
   BillingMode,
@@ -7,8 +7,9 @@ import {
 } from "aws-cdk-lib/aws-dynamodb";
 import { Construct } from "constructs";
 
-export class TableStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+export class SproutOpsTableStack extends Stack {
+  sproutOpsTable: Table;
+  constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
     const table = new Table(this, "SproutOpsTable", {
@@ -17,6 +18,8 @@ export class TableStack extends cdk.Stack {
       sortKey: { name: "SK", type: AttributeType.STRING },
       billingMode: BillingMode.PAY_PER_REQUEST,
     });
+
+    this.sproutOpsTable = table;
 
     table.addGlobalSecondaryIndex({
       indexName: "GSI1",

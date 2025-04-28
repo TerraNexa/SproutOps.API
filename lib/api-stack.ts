@@ -1,16 +1,45 @@
-import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { Duration, Expiration, Stack, StackProps } from "aws-cdk-lib";
+import {
+  AuthorizationType,
+  FieldLogLevel,
+  GraphqlApi,
+  SchemaFile,
+} from "aws-cdk-lib/aws-appsync";
+import { Table } from "aws-cdk-lib/aws-dynamodb";
+import { RetentionDays } from "aws-cdk-lib/aws-logs";
+import { Construct } from "constructs";
 
-export class ApiStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+interface SproutOpsApiStackProps extends StackProps {
+  sproutOpsTable: Table;
+}
+
+export class SproutOpsApiStack extends Stack {
+  constructor(scope: Construct, id: string, props?: SproutOpsApiStackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    const api = new GraphqlApi(this, "SproutOpsGraphQLApi", {
+      name: "sproutops-dev-graphql-api",
+      definition: {
+        schema: SchemaFile.fromAsset("lib/graphql/shema.graphql"),
+      },
+      logConfig: {
+        fieldLogLevel: FieldLogLevel.ALL,
+        retention: RetentionDays.TWO_WEEKS,
+      },
+      authorizationConfig: {
+        defaultAuthorization: {
+          authorizationType: AuthorizationType.API_KEY,
+          apiKeyConfig: {
+            name: "renopu-dev-app-appointment-graphql-api-key",
+            expires: Expiration.after(Duration.days(365)),
+          },
+        },
+      },
+    });
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'ApiQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    api.addDynamoDbDataSource(
+      "SproutOpsTableDataSource",
+      props!.sproutOpsTable
+    );
   }
 }
