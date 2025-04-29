@@ -5,6 +5,8 @@ import {
   ProjectionType,
   Table,
 } from "aws-cdk-lib/aws-dynamodb";
+import { Code, Runtime } from "aws-cdk-lib/aws-lambda";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
 
 export class SproutOpsTableStack extends Stack {
@@ -62,5 +64,17 @@ export class SproutOpsTableStack extends Stack {
       sortKey: { name: "GSI6SK", type: AttributeType.STRING },
       projectionType: ProjectionType.ALL,
     });
+
+    const lambda = new NodejsFunction(this, "MockDataGenerator", {
+      functionName: "sproutops-dev-generate-mock-data-lambda",
+      entry: "resources/lambdas/generate-mock-data/app.ts",
+      handler: "handler",
+      runtime: Runtime.NODEJS_LATEST,
+      environment: {
+        TABLE_NAME: table.tableName,
+      },
+    });
+
+    table.grantReadWriteData(lambda);
   }
 }
