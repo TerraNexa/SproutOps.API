@@ -1,7 +1,9 @@
 import { Duration, Expiration, Stack, StackProps } from "aws-cdk-lib";
 import {
   AuthorizationType,
+  Code,
   FieldLogLevel,
+  FunctionRuntime,
   GraphqlApi,
   SchemaFile,
 } from "aws-cdk-lib/aws-appsync";
@@ -20,7 +22,7 @@ export class SproutOpsApiStack extends Stack {
     const api = new GraphqlApi(this, "SproutOpsGraphQLApi", {
       name: "sproutops-dev-graphql-api",
       definition: {
-        schema: SchemaFile.fromAsset("lib/graphql/shema.graphql"),
+        schema: SchemaFile.fromAsset("lib/graphql/schema.graphql"),
       },
       logConfig: {
         fieldLogLevel: FieldLogLevel.ALL,
@@ -37,9 +39,16 @@ export class SproutOpsApiStack extends Stack {
       },
     });
 
-    api.addDynamoDbDataSource(
+    const tableDataSource = api.addDynamoDbDataSource(
       "SproutOpsTableDataSource",
       props!.sproutOpsTable
     );
+
+    tableDataSource.createResolver("GetBusinessResolver", {
+      typeName: "Query",
+      fieldName: "business",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Query.business.js"),
+    });
   }
 }

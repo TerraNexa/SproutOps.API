@@ -8,9 +8,14 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "codegen": "graphql-codegen",
+    "generate-mapping-templates": "esbuild --bundle --sourcemap=inline --sources-content=false --target=esnext --platform=node --format=esm --external:@aws-appsync/utils --outdir=dist/mapping-templates `find resources/mapping-templates \\\\( -name '*.ts' \\\\)`"
   },
   "devDependencies": {
+    "@aws-appsync/utils": "^2.0.3",
+    "@graphql-codegen/cli": "^5.0.5",
+    "@graphql-codegen/typescript": "^4.1.6",
     "@types/jest": "^29.5.14",
     "@types/node": "22.7.9",
     "aws-cdk": "2.1007.0",
@@ -25,6 +30,7 @@
     "aws-cdk-lib": "2.186.0",
     "constructs": "^10.0.0",
     "esbuild": "^0.25.3",
+    "graphql-codegen": "^0.4.0",
     "uuid": "^11.1.0"
   }
 }
