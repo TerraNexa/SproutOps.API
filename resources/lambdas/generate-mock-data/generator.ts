@@ -9,295 +9,330 @@ export function generateMockData(): Record<string, any>[] {
   const isoNow = now.toISOString();
   const past30 = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
+  // Utility to pick a random date between two dates
   function randomDate(start: Date, end: Date): string {
     const diff = end.getTime() - start.getTime();
     const offset = Math.floor(Math.random() * diff);
     return new Date(start.getTime() + offset).toISOString();
   }
 
-  // Configuration: counts per entity
-  const numBusiness = 2;
-  const numUsers = 2;
-  const numCustomers = 3;
-  const numServices = 2;
-  const numCrews = 2;
-  const numEquipment = 2;
-  const numJobs = 3;
-  const numInvoices = 2;
-  const numPayments = 1;
-  const numProposals = 2;
-  const numRecurring = 1;
-  const numTimeEntries = 2;
-  const numMaterials = 2;
-  const numInventoryTx = 1;
-  const numMaintenance = 1;
-  const numSuppliers = 2;
-  const numNotif = 2;
-  const numExpenses = 2;
+  // Pools of realistic names
+  const firstNames = [
+    "Alice",
+    "Bob",
+    "Carol",
+    "David",
+    "Eva",
+    "Frank",
+    "Grace",
+    "Henry",
+    "Ivy",
+    "Jack",
+  ];
+  const lastNames = [
+    "Smith",
+    "Johnson",
+    "Williams",
+    "Brown",
+    "Jones",
+    "Miller",
+    "Davis",
+    "Wilson",
+    "Taylor",
+    "Clark",
+  ];
+  function randomName(): string {
+    const fn = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const ln = lastNames[Math.floor(Math.random() * lastNames.length)];
+    return `${fn} ${ln}`;
+  }
 
-  for (let b = 0; b < numBusiness; b++) {
-    const bizId = uuidv4();
-    const created = isoNow;
+  // Counts per entity
+  const numBusinesses = 2;
+  const numUsersPerBiz = 2;
+  const numCustomersPerBiz = 3;
+  const numServicesPerBiz = 2;
+  const numCrewsPerBiz = 2;
+  const numEquipmentPerBiz = 2;
+  const numJobsPerBiz = 3;
+  const numInvoicesPerBiz = 2;
+  const numPaymentsPerInvoice = 1;
+  const numProposalsPerBiz = 2;
+  const numRecurringPerBiz = 1;
+  const numTimeEntriesPerBiz = 2;
+  const numMaterialsPerBiz = 2;
+  const numInventoryTxPerMaterial = 1;
+  const numMaintenancePerEquipment = 1;
+  const numSuppliersPerBiz = 2;
+  const numNotificationsPerUser = 2;
+  const numExpensesPerBiz = 2;
+
+  for (let b = 0; b < numBusinesses; b++) {
+    const businessId = uuidv4();
+    const createdAt = isoNow;
 
     // Business profile
     items.push({
-      PK: `BUS#${bizId}`,
+      PK: `BUS#${businessId}`,
       SK: "PROFILE",
       entityType: "BUSINESS",
-      businessId: bizId,
+      businessId,
       name: `Business ${b + 1}`,
-      address: `${100 + b} Elm St`,
-      createdAt: created,
-      updatedAt: created,
+      address: `${100 + b} Elm Street`,
+      createdAt,
+      updatedAt: createdAt,
     });
 
-    // Users & Memberships
+    // Users
     const userIds: string[] = [];
-    for (let u = 0; u < numUsers; u++) {
+    for (let u = 0; u < numUsersPerBiz; u++) {
       const userId = uuidv4();
       userIds.push(userId);
+      const name = randomName();
       items.push({
-        PK: `BUS#${bizId}`,
+        PK: `BUS#${businessId}`,
         SK: `USER#${userId}`,
         entityType: "USER",
         userId,
-        name: `User ${b + 1}-${u + 1}`,
-        email: `user${b + 1}${u + 1}@example.com`,
+        name,
+        email: `${name.toLowerCase().replace(/\s+/g, ".")}@example.com`,
         role: ["ADMIN", "EMPLOYEE"][Math.floor(Math.random() * 2)],
-        createdAt: created,
-        updatedAt: created,
-      });
-      items.push({
-        PK: `USER#${userId}`,
-        SK: `BUS#${bizId}`,
-        entityType: "MEMBERSHIP",
-        role: ["OWNER", "STAFF"][Math.floor(Math.random() * 2)],
-        joinedAt: created,
-        GSI1PK: `BUS#${bizId}`,
-        GSI1SK: `USER#${userId}`,
+        createdAt,
+        updatedAt: createdAt,
       });
     }
 
-    // Customers & Memberships
-    const custIds: string[] = [];
-    for (let c = 0; c < numCustomers; c++) {
-      const custId = uuidv4();
-      custIds.push(custId);
+    // Customers
+    const customerIds: string[] = [];
+    for (let c = 0; c < numCustomersPerBiz; c++) {
+      const customerId = uuidv4();
+      customerIds.push(customerId);
+      const name = randomName();
       items.push({
-        PK: `CUST#${custId}`,
+        PK: `CUST#${customerId}`,
         SK: "PROFILE",
         entityType: "CUSTOMER",
-        customerId: custId,
-        name: `Customer ${b + 1}-${c + 1}`,
-        email: `cust${b + 1}${c + 1}@example.com`,
-        phone: `555-0${100 + Math.floor(Math.random() * 900)}`,
-        address: `${200 + b + c} Oak Ave`,
-        createdAt: created,
-        updatedAt: created,
+        customerId,
+        name,
+        email: `${name.toLowerCase().replace(/\s+/g, ".")}@example.com`,
+        phone: `555-${100 + Math.floor(Math.random() * 900)}`,
+        address: `${200 + b + c} Oak Avenue`,
+        createdAt,
+        updatedAt: createdAt,
       });
+
+      // Customer membership
       items.push({
-        PK: `CUST#${custId}`,
-        SK: `BUS#${bizId}`,
+        PK: `CUST#${customerId}`,
+        SK: `BUS#${businessId}`,
         entityType: "CUSTOMER_MEMBERSHIP",
-        joinedAt: created,
-        GSI1PK: `BUS#${bizId}`,
-        GSI1SK: `CUST#${custId}`,
+        joinedAt: createdAt,
+        GSI1PK: `BUS#${businessId}`,
+        GSI1SK: `CUST#${customerId}`,
       });
     }
 
     // Services
-    for (let s = 0; s < numServices; s++) {
-      const servId = uuidv4();
-      const pricing = ["HOURLY", "FLAT"][Math.floor(Math.random() * 2)];
+    for (let s = 0; s < numServicesPerBiz; s++) {
+      const serviceId = uuidv4();
+      const pricingType = ["HOURLY", "FLAT"][Math.floor(Math.random() * 2)];
       items.push({
-        PK: `BUS#${bizId}`,
-        SK: `SERV#${servId}`,
+        PK: `BUS#${businessId}`,
+        SK: `SERV#${serviceId}`,
         entityType: "SERVICE",
-        serviceId: servId,
+        serviceId,
         name: `Service ${b + 1}-${s + 1}`,
-        description: "Generic service",
-        pricingType: pricing,
+        description: "Standard service",
+        pricingType,
         pricePerHour:
-          pricing === "HOURLY"
-            ? +(50 + Math.random() * 50).toFixed(2)
+          pricingType === "HOURLY"
+            ? Math.floor(50 + Math.random() * 50)
             : undefined,
         flatFee:
-          pricing === "FLAT"
-            ? +(200 + Math.random() * 300).toFixed(2)
+          pricingType === "FLAT"
+            ? Math.floor(200 + Math.random() * 300)
             : undefined,
         estimatedDuration: Math.floor(30 + Math.random() * 90),
-        createdAt: created,
-        updatedAt: created,
+        createdAt,
+        updatedAt: createdAt,
       });
     }
 
     // Crews
     const crewIds: string[] = [];
-    for (let cr = 0; cr < numCrews; cr++) {
-      const crId = uuidv4();
-      crewIds.push(crId);
+    for (let cr = 0; cr < numCrewsPerBiz; cr++) {
+      const crewId = uuidv4();
+      crewIds.push(crewId);
       items.push({
-        PK: `BUS#${bizId}`,
-        SK: `CREW#${crId}`,
+        PK: `BUS#${businessId}`,
+        SK: `CREW#${crewId}`,
         entityType: "CREW",
-        crewId: crId,
+        crewId,
         name: `Crew ${b + 1}-${cr + 1}`,
         members: [userIds[Math.floor(Math.random() * userIds.length)]],
-        createdAt: created,
-        updatedAt: created,
+        createdAt,
+        updatedAt: createdAt,
       });
     }
 
     // Equipment + Maintenance + Assignment
-    for (let eq = 0; eq < numEquipment; eq++) {
-      const eqId = uuidv4();
+    for (let eq = 0; eq < numEquipmentPerBiz; eq++) {
+      const equipmentId = uuidv4();
       items.push({
-        PK: `BUS#${bizId}`,
-        SK: `EQUIP#${eqId}`,
+        PK: `BUS#${businessId}`,
+        SK: `EQUIP#${equipmentId}`,
         entityType: "EQUIPMENT",
-        equipmentId: eqId,
+        equipmentId,
         name: `Equipment ${b + 1}-${eq + 1}`,
         type: "TOOL",
         status: ["AVAILABLE", "IN_USE"][Math.floor(Math.random() * 2)],
         purchaseDate: now.toISOString().slice(0, 10),
         lastServiceAt: now.toISOString().slice(0, 10),
         nextServiceDue: now.toISOString().slice(0, 10),
-        createdAt: created,
-        updatedAt: created,
+        createdAt,
+        updatedAt: createdAt,
       });
-      // Maintenance
-      const mId = uuidv4();
+      // Maintenance record
+      for (let m = 0; m < numMaintenancePerEquipment; m++) {
+        const maintenanceId = uuidv4();
+        items.push({
+          PK: `EQUIP#${equipmentId}`,
+          SK: `MAINT#${now.toISOString().slice(0, 10)}#${maintenanceId}`,
+          entityType: "MAINTENANCE_RECORD",
+          maintenanceId,
+          serviceDate: now.toISOString().slice(0, 10),
+          type: "ROUTINE",
+          provider: "ACME Services",
+          notes: "All good",
+          cost: 100,
+          nextServiceDue: now.toISOString().slice(0, 10),
+          createdAt,
+          updatedAt: createdAt,
+          GSI6PK: `BUS#${businessId}`,
+          GSI6SK: maintenanceId,
+        });
+      }
+      // Equipment assignment placeholder
       items.push({
-        PK: `EQUIP#${eqId}`,
-        SK: `MAINT#${now.toISOString().slice(0, 10)}#${mId}`,
-        entityType: "MAINTENANCE_RECORD",
-        maintenanceId: mId,
-        serviceDate: now.toISOString().slice(0, 10),
-        type: "ROUTINE",
-        provider: "ACME",
-        notes: "All good",
-        cost: 100,
-        nextServiceDue: now.toISOString().slice(0, 10),
-        createdAt: created,
-        updatedAt: created,
-        GSI6PK: `BUS#${bizId}`,
-        GSI6SK: mId,
-      });
-      // Equipment assignment (placeholder)
-      items.push({
-        PK: `EQUIP#${eqId}`,
-        SK: `JOB#`,
+        PK: `BUS#${businessId}`,
+        SK: `EQUIP#${equipmentId}#ASSIGN`,
         entityType: "EQUIPMENT_ASSIGNMENT",
-        equipmentId: eqId,
+        equipmentId,
         jobId: "",
-        crewId: crewIds[0],
+        crewId: crewIds[0] || "",
         scheduledStart: isoNow,
         scheduledEnd: isoNow,
-        GSI3PK: `BUS#${bizId}`,
-        GSI3SK: eqId,
-        GSI4PK: `CREW#${crewIds[0]}`,
-        GSI4SK: eqId,
+        GSI3PK: `BUS#${businessId}`,
+        GSI3SK: equipmentId,
       });
     }
 
     // Jobs
-    for (let j = 0; j < numJobs; j++) {
-      const jId = uuidv4();
-      const cust = custIds[Math.floor(Math.random() * custIds.length)];
-      const start = randomDate(past30, now);
-      const end = new Date(
-        new Date(start).getTime() + 2 * 60 * 60 * 1000
+    for (let jn = 0; jn < numJobsPerBiz; jn++) {
+      const jobId = uuidv4();
+      const customerId =
+        customerIds[Math.floor(Math.random() * customerIds.length)];
+      const startAt = randomDate(past30, now);
+      const endAt = new Date(
+        new Date(startAt).getTime() + 2 * 3600 * 1000
       ).toISOString();
       items.push({
-        PK: `BUS#${bizId}`,
-        SK: `JOB#${jId}`,
+        PK: `BUS#${businessId}`,
+        SK: `JOB#${jobId}`,
         entityType: "JOB",
-        jobId: jId,
-        customerId: cust,
+        jobId,
+        customerId,
         services: [],
         totalEstimatedDuration: 120,
-        scheduledStartAt: start,
-        scheduledEndAt: end,
-        totalEstimatedCost: +(100 + Math.random() * 400).toFixed(2),
+        scheduledStartAt: startAt,
+        scheduledEndAt: endAt,
+        totalEstimatedCost: Math.floor(100 + Math.random() * 400),
         status: ["SCHEDULED", "COMPLETED"][Math.floor(Math.random() * 2)],
-        createdAt: created,
-        updatedAt: created,
-        GSI2PK: `CUST#${cust}`,
-        GSI2SK: start,
+        createdAt,
+        updatedAt: createdAt,
+        GSI2PK: `CUST#${customerId}`,
+        GSI2SK: startAt,
       });
     }
 
     // Invoices & Payments
-    for (let inv = 0; inv < numInvoices; inv++) {
-      const invId = uuidv4();
-      const cust = custIds[Math.floor(Math.random() * custIds.length)];
-      const issued = isoNow;
-      const due = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+    for (let inv = 0; inv < numInvoicesPerBiz; inv++) {
+      const invoiceId = uuidv4();
+      const customerId =
+        customerIds[Math.floor(Math.random() * customerIds.length)];
+      const issuedAt = isoNow;
+      const dueDate = new Date(now.getTime() + 30 * 86400 * 1000)
         .toISOString()
         .slice(0, 10);
       items.push({
-        PK: `BUS#${bizId}`,
-        SK: `INV#${invId}`,
+        PK: `BUS#${businessId}`,
+        SK: `INV#${invoiceId}`,
         entityType: "INVOICE",
-        invoiceId: invId,
-        customerId: cust,
+        invoiceId,
+        customerId,
         status: "ISSUED",
-        issuedAt: issued,
-        dueDate: due,
+        issuedAt,
+        dueDate,
         lineItems: [
-          { description: "Item", quantity: 1, unitPrice: 100, totalPrice: 100 },
+          {
+            description: "Service charge",
+            quantity: 1,
+            unitPrice: 100,
+            totalPrice: 100,
+          },
         ],
         subTotal: 100,
         tax: 10,
         total: 110,
-        createdAt: created,
-        updatedAt: created,
-        GSI5PK: `CUST#${cust}`,
-        GSI5SK: issued,
+        createdAt,
+        updatedAt: createdAt,
+        GSI5PK: `CUST#${customerId}`,
+        GSI5SK: issuedAt,
       });
-      for (let pay = 0; pay < numPayments; pay++) {
-        const payId = uuidv4();
+      for (let p = 0; p < numPaymentsPerInvoice; p++) {
+        const paymentId = uuidv4();
         const paidAt = isoNow;
         items.push({
-          PK: `BUS#${bizId}`,
-          SK: `PAY#${paidAt}#${payId}`,
+          PK: `BUS#${businessId}`,
+          SK: `PAY#${paidAt}#${paymentId}`,
           entityType: "PAYMENT",
-          paymentId: payId,
-          invoiceId: invId,
-          customerId: cust,
+          paymentId,
+          invoiceId,
+          customerId,
           amount: 110,
           method: "CREDIT_CARD",
           paidAt,
-          createdAt: created,
-          updatedAt: created,
-          GSI2PK: `CUST#${cust}`,
+          createdAt,
+          updatedAt: createdAt,
+          GSI2PK: `CUST#${customerId}`,
           GSI2SK: paidAt,
-          GSI5PK: `INV#${invId}`,
+          GSI5PK: `INV#${invoiceId}`,
           GSI5SK: paidAt,
         });
       }
     }
 
     // Proposals
-    for (let pr = 0; pr < numProposals; pr++) {
-      const prId = uuidv4();
-      const cust = custIds[Math.floor(Math.random() * custIds.length)];
-      const validUntil = new Date(now.getTime() + 15 * 24 * 60 * 60 * 1000)
+    for (let pr = 0; pr < numProposalsPerBiz; pr++) {
+      const proposalId = uuidv4();
+      const customerId =
+        customerIds[Math.floor(Math.random() * customerIds.length)];
+      const validUntil = new Date(now.getTime() + 15 * 86400 * 1000)
         .toISOString()
         .slice(0, 10);
       items.push({
-        PK: `BUS#${bizId}`,
-        SK: `PROP#${prId}`,
+        PK: `BUS#${businessId}`,
+        SK: `PROP#${proposalId}`,
         entityType: "PROPOSAL",
-        proposalId: prId,
-        customerId: cust,
+        proposalId,
+        customerId,
         status: "SENT",
-        createdAt: created,
+        createdAt,
         validUntil,
-        updatedAt: created,
+        updatedAt: createdAt,
         lineItems: [
           {
-            description: "Proposal Item",
+            description: "Proposal service",
             quantity: 1,
             unitPrice: 150,
             totalPrice: 150,
@@ -306,123 +341,122 @@ export function generateMockData(): Record<string, any>[] {
         subTotal: 150,
         tax: 15,
         total: 165,
-        GSI5PK: `CUST#${cust}`,
-        GSI5SK: created,
+        GSI5PK: `CUST#${customerId}`,
+        GSI5SK: createdAt,
       });
     }
 
-    // Recurring jobs
-    for (let r = 0; r < numRecurring; r++) {
-      const rId = uuidv4();
-      const cust = custIds[Math.floor(Math.random() * custIds.length)];
-      const nextRun = isoNow;
+    // Recurring Jobs
+    for (let r = 0; r < numRecurringPerBiz; r++) {
+      const recurringId = uuidv4();
+      const customerId =
+        customerIds[Math.floor(Math.random() * customerIds.length)];
+      const nextRunAt = isoNow;
       items.push({
-        PK: `BUS#${bizId}`,
-        SK: `RECUR#${rId}`,
+        PK: `BUS#${businessId}`,
+        SK: `RECUR#${recurringId}`,
         entityType: "RECURRING_JOB",
-        recurringId: rId,
-        name: "Monthly Cleanup",
-        customerId: cust,
+        recurringId,
+        name: "Monthly Maintenance",
+        customerId,
         services: [],
         recurrenceRule: "FREQ=MONTHLY",
         leadTimeDays: 7,
-        nextRunAt: nextRun,
+        nextRunAt,
         status: "ACTIVE",
-        createdAt: created,
-        updatedAt: created,
-        GSI6PK: `CUST#${cust}`,
-        GSI6SK: nextRun,
+        createdAt,
+        updatedAt: createdAt,
+        GSI6PK: `CUST#${customerId}`,
+        GSI6SK: nextRunAt,
       });
     }
 
-    // Time entries
-    for (let t = 0; t < numTimeEntries; t++) {
-      const tId = uuidv4();
-      const uid = userIds[Math.floor(Math.random() * userIds.length)];
-      const start = isoNow;
-      const end = new Date(
-        new Date(start).getTime() + 60 * 60 * 1000
+    // Time Entries
+    for (let te = 0; te < numTimeEntriesPerBiz; te++) {
+      const timeEntryId = uuidv4();
+      const userId = userIds[Math.floor(Math.random() * userIds.length)];
+      const startAt = isoNow;
+      const endAt = new Date(
+        new Date(startAt).getTime() + 3600 * 1000
       ).toISOString();
       items.push({
-        PK: `BUS#${bizId}`,
-        SK: `TIME#USER#${uid}#${start}#${tId}`,
+        PK: `BUS#${businessId}`,
+        SK: `TIME#${userId}#${startAt}#${timeEntryId}`,
         entityType: "TIME_ENTRY",
-        timeEntryId: tId,
-        userId: uid,
-        startAt: start,
-        endAt: end,
+        timeEntryId,
+        userId,
+        startAt,
+        endAt,
         duration: 60,
         notes: "",
-        createdAt: created,
-        updatedAt: created,
+        createdAt,
+        updatedAt: createdAt,
       });
     }
 
-    // Materials & inventory
-    const matIds: string[] = [];
-    for (let m = 0; m < numMaterials; m++) {
-      const mId = uuidv4();
-      matIds.push(mId);
+    // Materials & Inventory Transactions
+    for (let m = 0; m < numMaterialsPerBiz; m++) {
+      const materialId = uuidv4();
       items.push({
-        PK: `BUS#${bizId}`,
-        SK: `MATERIAL#${mId}`,
+        PK: `BUS#${businessId}`,
+        SK: `MATERIAL#${materialId}`,
         entityType: "MATERIAL",
-        materialId: mId,
+        materialId,
         name: "Mulch",
         unit: "BAG",
         unitCost: 5,
         currentStock: 20,
         reorderThreshold: 5,
-        createdAt: created,
-        updatedAt: created,
+        createdAt,
+        updatedAt: createdAt,
       });
-      for (let tx = 0; tx < numInventoryTx; tx++) {
-        const txId = uuidv4();
-        const txTime = randomDate(past30, now);
+      for (let tx = 0; tx < numInventoryTxPerMaterial; tx++) {
+        const txnId = uuidv4();
+        const createdAtTxn = randomDate(past30, now);
         items.push({
-          PK: `MATERIAL#${mId}`,
-          SK: `INVENTORY#${txTime}#${txId}`,
+          PK: `MATERIAL#${materialId}`,
+          SK: `INVENTORY#${createdAtTxn}#${txnId}`,
           entityType: "INVENTORY_TXN",
-          txnId: txId,
+          txnId,
           type: "PURCHASE",
           quantity: 10,
           unitCost: 5,
-          createdAt: txTime,
+          createdAt: createdAtTxn,
         });
       }
     }
 
     // Suppliers
-    for (let sp = 0; sp < numSuppliers; sp++) {
-      const spId = uuidv4();
+    for (let sp = 0; sp < numSuppliersPerBiz; sp++) {
+      const supplierId = uuidv4();
       items.push({
-        PK: `BUS#${bizId}`,
-        SK: `SUP#${spId}`,
+        PK: `BUS#${businessId}`,
+        SK: `SUP#${supplierId}`,
         entityType: "SUPPLIER",
-        supplierId: spId,
+        supplierId,
         name: `Supplier ${sp + 1}`,
-        contactName: "Jane Doe",
-        email: "jane@sup.com",
+        contactName: randomName(),
+        email: "supplier@example.com",
         phone: "555-0200",
-        address: "500 Pine Rd",
+        address: "500 Pine Road",
         paymentTerms: "Net30",
         leadTimeDays: 7,
-        materials: matIds,
-        createdAt: created,
-        updatedAt: created,
+        materials: [],
+        createdAt,
+        updatedAt: createdAt,
       });
     }
 
     // Notifications
-    for (const uid of userIds) {
-      for (let n = 0; n < numNotif; n++) {
-        const nId = uuidv4();
-        const ts = isoNow;
+    userIds.forEach((userId) => {
+      for (let n = 0; n < numNotificationsPerUser; n++) {
+        const notificationId = uuidv4();
+        const createdAtNotif = isoNow;
         items.push({
-          PK: `USER#${uid}`,
-          SK: `NOTIF#${ts}#${nId}`,
+          PK: `BUS#${businessId}`,
+          SK: `NOTIF#${notificationId}#${createdAtNotif}`,
           entityType: "NOTIFICATION",
-          notificationId: nId,
+          notificationId,
           type: "ALERT",
           level: "INFO",
           message: "Test notification",
@@ -430,30 +464,30 @@ export function generateMockData(): Record<string, any>[] {
           relatedEntityId: "",
           channels: ["EMAIL"],
           read: false,
-          createdAt: ts,
-          updatedAt: ts,
+          createdAt: createdAtNotif,
+          updatedAt: createdAtNotif,
         });
       }
-    }
+    });
 
     // Expenses
-    for (let e = 0; e < numExpenses; e++) {
-      const eId = uuidv4();
+    for (let e = 0; e < numExpensesPerBiz; e++) {
+      const expenseId = uuidv4();
       items.push({
-        PK: `BUS#${bizId}`,
-        SK: `EXP#${eId}`,
+        PK: `BUS#${businessId}`,
+        SK: `EXP#${expenseId}`,
         entityType: "EXPENSE",
-        expenseId: eId,
+        expenseId,
         date: now.toISOString().slice(0, 10),
-        amount: +(50 + Math.random() * 250).toFixed(2),
+        amount: Math.floor(50 + Math.random() * 250),
         currency: "USD",
         category: "Fuel",
         description: "Gas expense",
-        createdAt: created,
-        updatedAt: created,
+        createdAt,
+        updatedAt: createdAt,
       });
     }
-  } // end business loop
+  } // end businesses loop
 
   return items;
 }
