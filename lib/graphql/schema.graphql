@@ -907,7 +907,7 @@ type ServiceSnapshot {
 
 type Job {
   jobId: ID!
-  customerId: ID!
+  customer: Customer!
   services: [ServiceSnapshot!]!
   totalEstimatedDuration: Int!
   scheduledStartAt: AWSDateTime!
