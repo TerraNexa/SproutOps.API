@@ -54,7 +54,7 @@ export function generateMockData(): Record<string, any>[] {
       PK: `USER#${userId}`,
       SK: `BUS#${businessId}`,
       entityType: "MEMBERSHIP",
-      role: "OWNER",
+      role: ["OWNER", "MANAGER", "EMPLOYEE"][i],
       joinedAt: isoNow,
       GSI1PK: `BUS#${businessId}`,
       GSI1SK: `USER#${userId}`,
