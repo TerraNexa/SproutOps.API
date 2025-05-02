@@ -9,6 +9,9 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
+    "deploy:all": "npm run generate-mapping-templates && npx cdk deploy --all --require-approval never",
+    "deploy:api": "npm run generate-mapping-templates && npx cdk deploy SproutOpsApiStack --require-approval never",
+    "deploy:table": "npx cdk deploy SproutOpsTableStack --require-approval never",
     "codegen": "graphql-codegen",
     "generate-mapping-templates": "esbuild --bundle --sourcemap=inline --sources-content=false --target=esnext --platform=node --format=esm --external:@aws-appsync/utils --outdir=dist/mapping-templates `find resources/mapping-templates \\\\( -name '*.ts' \\\\)`"
   },

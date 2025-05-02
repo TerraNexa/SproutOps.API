@@ -34,4 +34,4 @@ jobs:
 
       - name: Deploy Stacks
         run: |
-          npx cdk deploy --all --require-approval never
+          npm run deploy:all
