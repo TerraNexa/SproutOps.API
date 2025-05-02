@@ -51,6 +51,7 @@ export class SproutOpsApiStack extends Stack {
     // Business Resolvers
     this.createQueryBusinessResolver();
     this.createBusinessUsersResolver();
+    this.createBusinessJobsResolver();
     this.createBusinessServicesResolver();
   }
 
@@ -94,6 +95,15 @@ export class SproutOpsApiStack extends Stack {
         "dist/mapping-templates/Business.users/pipeline-resolver.js"
       ),
       pipelineConfig: [getMemberships, getUsers],
+    });
+  }
+
+  private createBusinessJobsResolver() {
+    this.tableDataSource.createResolver("BusinessJobsResolver", {
+      typeName: "Business",
+      fieldName: "jobs",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Business.jobs.js"),
     });
   }
 
