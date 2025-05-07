@@ -394,3 +394,21 @@ export interface InventoryTxnItem extends BaseItem {
   note?: string;
   createdAt: string;
 }
+
+// ========== Expense ==========
+/**
+ *
+ */
+export interface ExpenseItem extends BaseItem {
+  entityType: "EXPENSE";
+  PK: `BUS#${string}`;
+  SK: `EXP#${string}`;
+  expenseId: string;
+  amount: number;
+  currency: string;
+  category: string;
+  date: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
