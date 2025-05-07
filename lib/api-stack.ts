@@ -55,6 +55,7 @@ export class SproutOpsApiStack extends Stack {
     this.createBusinessEquipmentResolver();
     this.createBusinessInvoicesResolver();
     this.createBusinessJobsResolver();
+    this.createBusinessMaterialsResolver();
     this.createBusinessProposalsResolver();
     this.createBusinessRecurringJobsResolver();
     this.createBusinessServicesResolver();
@@ -178,6 +179,15 @@ export class SproutOpsApiStack extends Stack {
       fieldName: "jobs",
       runtime: FunctionRuntime.JS_1_0_0,
       code: Code.fromAsset("dist/mapping-templates/Business.jobs.js"),
+    });
+  }
+
+  private createBusinessMaterialsResolver() {
+    this.tableDataSource.createResolver("BusinessMaterialsResolver", {
+      typeName: "Business",
+      fieldName: "materials",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Business.materials.js"),
     });
   }
 
