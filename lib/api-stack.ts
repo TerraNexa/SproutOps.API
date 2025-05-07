@@ -50,20 +50,56 @@ export class SproutOpsApiStack extends Stack {
 
     // Business Resolvers
     this.createQueryBusinessResolver();
-    this.createBusinessUsersResolver();
+    this.createBusinessCustomersResolver();
     this.createBusinessJobsResolver();
     this.createBusinessServicesResolver();
+    this.createBusinessUsersResolver();
 
     // Job Resolvers
     this.createJobCustomerResolver();
   }
 
+  // Business Resolvers
   private createQueryBusinessResolver() {
     this.tableDataSource.createResolver("QueryBusinessResolver", {
       typeName: "Query",
       fieldName: "business",
       runtime: FunctionRuntime.JS_1_0_0,
       code: Code.fromAsset("dist/mapping-templates/Query.business.js"),
+    });
+  }
+
+  private createBusinessCustomersResolver() {
+    const getMemberships = this.tableDataSource.createFunction(
+      "BusinessCustomersGetMembershipsFunction",
+      {
+        name: "BusinessCustomersGetMembershipsFunction",
+        runtime: FunctionRuntime.JS_1_0_0,
+        code: Code.fromAsset(
+          "dist/mapping-templates/Business.customers/get-memberships.js"
+        ),
+      }
+    );
+
+    const getCustomers = this.tableDataSource.createFunction(
+      "BusinessCustomersGetCustomersFunction",
+      {
+        name: "BusinessCustomersGetCustomersFunction",
+        runtime: FunctionRuntime.JS_1_0_0,
+        code: Code.fromAsset(
+          "dist/mapping-templates/Business.customers/get-customers.js"
+        ),
+      }
+    );
+
+    this.api.createResolver("BusinessCustomersResolver", {
+      typeName: "Business",
+      fieldName: "customers",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset(
+        "dist/mapping-templates/Business.customers/pipeline-resolver.js"
+      ),
+      pipelineConfig: [getMemberships, getCustomers],
     });
   }
 
@@ -119,6 +155,10 @@ export class SproutOpsApiStack extends Stack {
     });
   }
 
+  // Customer Resolvers
+  private createCustomerJobsResolver() {}
+
+  // Job Resolvers
   private createJobCustomerResolver() {
     this.tableDataSource.createResolver("JobCustomerResolver", {
       typeName: "Job",
