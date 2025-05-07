@@ -1,12 +1,12 @@
 import { Context } from "@aws-appsync/utils";
 import { query } from "@aws-appsync/utils/dynamodb";
 import { Business } from "../types/appsync";
-import { EquipmentItem } from "../types/dynamodb";
+import { InvoiceItem } from "../types/dynamodb";
 
 export function request(ctx: Context) {
   const business: Business = ctx.source;
 
-  return query<EquipmentItem>({
+  return query<InvoiceItem>({
     query: {
       PK: {
         eq: `BUS#${business.businessId}`,
