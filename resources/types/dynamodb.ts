@@ -51,6 +51,17 @@ export interface MembershipItem extends BaseItem {
   GSI1SK: `USER#${string}`;
 }
 
+export interface CrewItem {
+  PK: `BUS#${string}`;
+  SK: `CREW#${string}`;
+  entityType: "CREW";
+  crewId: string;
+  name: string;
+  members: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 // ========== BUSINESS ==========
 /**
  * Represents a business tenant within SproutOps.
@@ -152,6 +163,20 @@ export interface JobItem extends BaseItem {
   updatedAt: string;
   GSI2PK: `CUST#${string}`;
   GSI2SK: string;
+}
+
+/**
+ * Represents a crew assignment for a job
+ */
+export interface JobCrewAssignmentItem {
+  PK: `JOB#${string}`;
+  SK: `CREW#${string}`;
+  entityType: "JOB_CREW_ASSIGNMENT";
+  jobId: string;
+  crewId: string;
+  assignedAt: string; // ISO timestamp
+  GSI1PK: `CREW#${string}`;
+  GSI1SK: `JOB#${string}`;
 }
 
 // ========== INVOICE ==========
