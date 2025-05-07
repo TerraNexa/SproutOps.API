@@ -89,7 +89,7 @@ export function generateMockData(): Record<string, any>[] {
     });
 
     // Service
-    items.push({
+    const service = {
       PK: `BUS#${businessId}`,
       SK: `SERV#${serviceId}`,
       entityType: "SERVICE",
@@ -101,7 +101,9 @@ export function generateMockData(): Record<string, any>[] {
       estimatedDuration: [30, 60, 45][i],
       createdAt: isoNow,
       updatedAt: isoNow,
-    });
+    };
+
+    items.push(service);
 
     // Crew
     items.push({
@@ -174,7 +176,16 @@ export function generateMockData(): Record<string, any>[] {
       entityType: "JOB",
       jobId,
       customerId,
-      services: [],
+      services: [
+        {
+          serviceId: service.serviceId,
+          serviceName: service.name,
+          pricingType: service.pricingType,
+          pricePerHour: service.pricingType,
+          flatFee: service.flatFee,
+          estimatedDuration: service.estimatedDuration,
+        },
+      ],
       totalEstimatedDuration: 60,
       scheduledStartAt: new Date(
         now.getTime() + (7 + i) * 86400000
@@ -188,6 +199,18 @@ export function generateMockData(): Record<string, any>[] {
       updatedAt: isoNow,
       GSI2PK: `CUST#${customerId}`,
       GSI2SK: isoNow,
+    });
+
+    // Job Crew Assignment
+    items.push({
+      PK: `JOB#${jobId}`,
+      SK: `CREW#${crewId}`,
+      entityType: "JOB_CREW_ASSIGNMENT",
+      jobId,
+      crewId,
+      assignedAt: isoNow,
+      GSI1PK: `CREW#${crewId}`,
+      GSI1SK: `JOB#${jobId}`,
     });
 
     // Invoice

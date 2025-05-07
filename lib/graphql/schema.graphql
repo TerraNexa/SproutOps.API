@@ -624,6 +624,7 @@ input CreateJobInput {
   scheduledEndAt: AWSDateTime!
   totalEstimatedCost: Float!
   status: JobStatus!
+  crewId: ID
 }
 
 input UpdateJobInput {
@@ -633,6 +634,7 @@ input UpdateJobInput {
   scheduledEndAt: AWSDateTime
   status: JobStatus
   totalEstimatedCost: Float
+  crewId: ID
 }
 
 input LineItemInput {
@@ -908,6 +910,7 @@ type ServiceSnapshot {
 type Job {
   jobId: ID!
   customer: Customer!
+  crew: Crew!
   services: [ServiceSnapshot!]!
   totalEstimatedDuration: Int!
   scheduledStartAt: AWSDateTime!
@@ -1006,6 +1009,7 @@ type Crew {
   crewId: ID!
   name: String!
   members: [ID!]
+  jobs: [Job!]!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
