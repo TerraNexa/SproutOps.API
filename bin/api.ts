@@ -9,7 +9,7 @@ const sproutOpsTableStack = new SproutOpsTableStack(
   "SproutOpsTableStack",
   {}
 );
-new SproutOpsApiStack(app, "ApiStack", {
+new SproutOpsApiStack(app, "SproutOpsApiStack", {
   sproutOpsTable: sproutOpsTableStack.sproutOpsTable,
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,

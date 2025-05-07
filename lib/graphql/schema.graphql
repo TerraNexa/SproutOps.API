@@ -1,0 +1,1088 @@
+# Enums
+
+enum BusinessUserRole {
+  OWNER
+  MANAGER
+  EMPLOYEE
+}
+
+enum PricingType {
+  HOURLY
+  FLAT
+}
+
+enum JobStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PAID
+  OVERDUE
+}
+
+enum ProposalStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  DECLINED
+}
+
+enum RecurringJobStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+}
+
+enum EquipmentStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+}
+
+enum InventoryTxnType {
+  PURCHASE
+  CONSUMPTION
+}
+
+enum NotificationLevel {
+  INFO
+  WARN
+  ERROR
+}
+
+enum NotificationChannel {
+  EMAIL
+  SMS
+}
+
+# Scalar filter inputs for flexible querying
+input IDFilter {
+  eq: ID
+  ne: ID
+  in: [ID!]
+  nin: [ID!]
+}
+
+input StringFilter {
+  eq: String
+  ne: String
+  contains: String
+  startsWith: String
+  in: [String!]
+  nin: [String!]
+}
+
+input DateTimeFilter {
+  eq: AWSDateTime
+  ne: AWSDateTime
+  lt: AWSDateTime
+  lte: AWSDateTime
+  gt: AWSDateTime
+  gte: AWSDateTime
+}
+
+input DateFilter {
+  eq: AWSDate
+  ne: AWSDate
+  lt: AWSDate
+  lte: AWSDate
+  gt: AWSDate
+  gte: AWSDate
+}
+
+input IntFilter {
+  eq: Int
+  ne: Int
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  nin: [Int!]
+}
+
+input FloatFilter {
+  eq: Float
+  ne: Float
+  lt: Float
+  lte: Float
+  gt: Float
+  gte: Float
+  in: [Float!]
+  nin: [Float!]
+}
+
+# Generic pagination
+input PaginationInput {
+  limit: Int
+  nextToken: String
+}
+
+# Sorting helpers
+enum SortDirection {
+  ASC
+  DESC
+}
+
+enum BusinessSortField {
+  BUSINESS_ID
+  NAME
+  ADDRESS
+  CREATED_AT
+  UPDATED_AT
+}
+
+input BusinessSortInput {
+  field: BusinessSortField!
+  direction: SortDirection!
+}
+
+input BusinessWhereInput {
+  businessId: IDFilter
+  name: StringFilter
+  address: StringFilter
+}
+
+input BusinessListInput {
+  where: BusinessWhereInput
+  sortBy: BusinessSortInput
+  pagination: PaginationInput
+}
+
+# Entity-specific sort and filter inputs
+
+input CustomerWhereInput {
+  customerId: IDFilter
+  name: StringFilter
+  email: StringFilter
+  phone: StringFilter
+  address: StringFilter
+}
+
+enum CustomerSortField {
+  CUSTOMER_ID
+  NAME
+  EMAIL
+  CREATED_AT
+  UPDATED_AT
+}
+
+input CustomerSortInput {
+  field: CustomerSortField!
+  direction: SortDirection!
+}
+
+input CustomerListInput {
+  where: CustomerWhereInput
+  sortBy: CustomerSortInput
+  pagination: PaginationInput
+}
+
+input ServiceWhereInput {
+  serviceId: IDFilter
+  name: StringFilter
+  pricingType: StringFilter
+}
+
+enum ServiceSortField {
+  SERVICE_ID
+  NAME
+  CREATED_AT
+  UPDATED_AT
+}
+
+input ServiceSortInput {
+  field: ServiceSortField!
+  direction: SortDirection!
+}
+
+input ServiceListInput {
+  where: ServiceWhereInput
+  sortBy: ServiceSortInput
+  pagination: PaginationInput
+}
+
+input JobWhereInput {
+  jobId: IDFilter
+  customerId: IDFilter
+  status: StringFilter
+  scheduledStartAt: DateTimeFilter
+  scheduledEndAt: DateTimeFilter
+}
+
+enum JobSortField {
+  JOB_ID
+  CUSTOMER_ID
+  SCHEDULED_START_AT
+  SCHEDULED_END_AT
+  CREATED_AT
+  UPDATED_AT
+  STATUS
+}
+
+input JobSortInput {
+  field: JobSortField!
+  direction: SortDirection!
+}
+
+input JobListInput {
+  where: JobWhereInput
+  sortBy: JobSortInput
+  pagination: PaginationInput
+}
+
+input InvoiceWhereInput {
+  invoiceId: IDFilter
+  customerId: IDFilter
+  status: StringFilter
+  issuedAt: DateTimeFilter
+  dueDate: DateFilter
+}
+
+enum InvoiceSortField {
+  INVOICE_ID
+  CUSTOMER_ID
+  ISSUED_AT
+  DUE_DATE
+  CREATED_AT
+  UPDATED_AT
+  STATUS
+}
+
+input InvoiceSortInput {
+  field: InvoiceSortField!
+  direction: SortDirection!
+}
+
+input InvoiceListInput {
+  where: InvoiceWhereInput
+  sortBy: InvoiceSortInput
+  pagination: PaginationInput
+}
+
+input PaymentWhereInput {
+  paymentId: IDFilter
+  customerId: IDFilter
+  invoiceId: IDFilter
+  paidAt: DateTimeFilter
+}
+
+enum PaymentSortField {
+  PAYMENT_ID
+  CUSTOMER_ID
+  PAID_AT
+  CREATED_AT
+  UPDATED_AT
+}
+
+input PaymentSortInput {
+  field: PaymentSortField!
+  direction: SortDirection!
+}
+
+input PaymentListInput {
+  where: PaymentWhereInput
+  sortBy: PaymentSortInput
+  pagination: PaginationInput
+}
+
+input ProposalWhereInput {
+  proposalId: IDFilter
+  customerId: IDFilter
+  status: StringFilter
+  validUntil: DateFilter
+}
+
+enum ProposalSortField {
+  PROPOSAL_ID
+  CUSTOMER_ID
+  CREATED_AT
+  VALID_UNTIL
+  STATUS
+}
+
+input ProposalSortInput {
+  field: ProposalSortField!
+  direction: SortDirection!
+}
+
+input ProposalListInput {
+  where: ProposalWhereInput
+  sortBy: ProposalSortInput
+  pagination: PaginationInput
+}
+
+input RecurringJobWhereInput {
+  recurringId: IDFilter
+  customerId: IDFilter
+  status: StringFilter
+}
+
+enum RecurringJobSortField {
+  RECURRING_ID
+  CUSTOMER_ID
+  NEXT_RUN_AT
+  CREATED_AT
+  UPDATED_AT
+  STATUS
+}
+
+input RecurringJobSortInput {
+  field: RecurringJobSortField!
+  direction: SortDirection!
+}
+
+input RecurringJobListInput {
+  where: RecurringJobWhereInput
+  sortBy: RecurringJobSortInput
+  pagination: PaginationInput
+}
+
+input EquipmentWhereInput {
+  equipmentId: IDFilter
+  name: StringFilter
+  type: StringFilter
+  status: StringFilter
+}
+
+enum EquipmentSortField {
+  EQUIPMENT_ID
+  STATUS
+  CREATED_AT
+  UPDATED_AT
+}
+
+input EquipmentSortInput {
+  field: EquipmentSortField!
+  direction: SortDirection!
+}
+
+input EquipmentListInput {
+  where: EquipmentWhereInput
+  sortBy: EquipmentSortInput
+  pagination: PaginationInput
+}
+
+input TimeEntryWhereInput {
+  timeEntryId: IDFilter
+  userId: IDFilter
+  jobId: IDFilter
+  crewId: IDFilter
+  startAt: DateTimeFilter
+  endAt: DateTimeFilter
+}
+
+enum TimeEntrySortField {
+  TIME_ENTRY_ID
+  USER_ID
+  JOB_ID
+  START_AT
+  CREATED_AT
+}
+
+input TimeEntrySortInput {
+  field: TimeEntrySortField!
+  direction: SortDirection!
+}
+
+input TimeEntryListInput {
+  where: TimeEntryWhereInput
+  sortBy: TimeEntrySortInput
+  pagination: PaginationInput
+}
+
+input MaterialWhereInput {
+  materialId: IDFilter
+  name: StringFilter
+}
+
+enum MaterialSortField {
+  MATERIAL_ID
+  NAME
+  CURRENT_STOCK
+  CREATED_AT
+  UPDATED_AT
+}
+
+input MaterialSortInput {
+  field: MaterialSortField!
+  direction: SortDirection!
+}
+
+input MaterialListInput {
+  where: MaterialWhereInput
+  sortBy: MaterialSortInput
+  pagination: PaginationInput
+}
+
+input InventoryTransactionWhereInput {
+  txnId: IDFilter
+  materialId: IDFilter
+  type: StringFilter
+  createdAt: DateTimeFilter
+}
+
+enum InventoryTransactionSortField {
+  TXN_ID
+  MATERIAL_ID
+  CREATED_AT
+}
+
+input InventoryTransactionSortInput {
+  field: InventoryTransactionSortField!
+  direction: SortDirection!
+}
+
+input InventoryTransactionListInput {
+  where: InventoryTransactionWhereInput
+  sortBy: InventoryTransactionSortInput
+  pagination: PaginationInput
+}
+
+input MaintenanceRecordWhereInput {
+  maintenanceId: IDFilter
+  equipmentId: IDFilter
+  serviceDate: DateFilter
+}
+
+enum MaintenanceRecordSortField {
+  MAINTENANCE_ID
+  EQUIPMENT_ID
+  SERVICE_DATE
+}
+
+input MaintenanceRecordSortInput {
+  field: MaintenanceRecordSortField!
+  direction: SortDirection!
+}
+
+input MaintenanceRecordListInput {
+  where: MaintenanceRecordWhereInput
+  sortBy: MaintenanceRecordSortInput
+  pagination: PaginationInput
+}
+
+# Root mutation operations
+# Mutations allow creating, updating, or deleting core business data.
+# Each mutation corresponds to an entity defined in the system and is linked to a specific input shape.
+
+type Mutation {
+  createBusiness(input: CreateBusinessInput!): Business!
+  updateBusiness(input: UpdateBusinessInput!): Business!
+  deleteBusiness(businessId: ID!): Boolean!
+
+  createUser(input: CreateUserInput!): User!
+  updateUser(input: UpdateUserInput!): User!
+  deleteUser(userId: ID!): Boolean!
+  joinUserToBusiness(input: JoinUserToBusinessInput!): Boolean!
+
+  createCustomer(input: CreateCustomerInput!): Customer!
+  updateCustomer(input: UpdateCustomerInput!): Customer!
+  deleteCustomer(customerId: ID!): Boolean!
+  joinCustomerToBusiness(
+    input: JoinCustomerToBusinessInput!
+  ): CustomerMembership!
+
+  createService(input: CreateServiceInput!): Service!
+  updateService(input: UpdateServiceInput!): Service!
+  deleteService(serviceId: ID!): Boolean!
+
+  createJob(input: CreateJobInput!): Job!
+  updateJob(input: UpdateJobInput!): Job!
+  deleteJob(jobId: ID!): Boolean!
+
+  createInvoice(input: CreateInvoiceInput!): Invoice!
+  updateInvoice(input: UpdateInvoiceInput!): Invoice!
+  deleteInvoice(invoiceId: ID!): Boolean!
+
+  createPayment(input: CreatePaymentInput!): Payment!
+  updatePayment(input: UpdatePaymentInput!): Payment!
+  deletePayment(paymentId: ID!): Boolean!
+
+  createProposal(input: CreateProposalInput!): Proposal!
+  updateProposal(input: UpdateProposalInput!): Proposal!
+  deleteProposal(proposalId: ID!): Boolean!
+
+  createRecurringJob(input: CreateRecurringJobInput!): RecurringJob!
+  updateRecurringJob(input: UpdateRecurringJobInput!): RecurringJob!
+  deleteRecurringJob(recurringId: ID!): Boolean!
+
+  createTimeEntry(input: CreateTimeEntryInput!): TimeEntry!
+  updateTimeEntry(input: UpdateTimeEntryInput!): TimeEntry!
+  deleteTimeEntry(timeEntryId: ID!): Boolean!
+
+  createMaterial(input: CreateMaterialInput!): Material!
+  updateMaterial(input: UpdateMaterialInput!): Material!
+  deleteMaterial(materialId: ID!): Boolean!
+
+  createInventoryTransaction(
+    input: CreateInventoryTransactionInput!
+  ): InventoryTransaction!
+  updateInventoryTransaction(
+    input: UpdateInventoryTransactionInput!
+  ): InventoryTransaction!
+  deleteInventoryTransaction(txnId: ID!): Boolean!
+
+  createMaintenanceRecord(
+    input: CreateMaintenanceRecordInput!
+  ): MaintenanceRecord!
+  updateMaintenanceRecord(
+    input: UpdateMaintenanceRecordInput!
+  ): MaintenanceRecord!
+  deleteMaintenanceRecord(maintenanceId: ID!): Boolean!
+}
+
+# Mutation input types
+
+input CreateBusinessInput {
+  name: String!
+  address: String!
+}
+
+input UpdateBusinessInput {
+  businessId: ID!
+  name: String
+  address: String
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+}
+
+input UpdateUserInput {
+  userId: ID!
+  name: String
+  email: String
+}
+
+input JoinUserToBusinessInput {
+  userId: ID!
+  businessId: ID!
+  role: BusinessUserRole!
+}
+
+input CreateCustomerInput {
+  name: String!
+  email: String!
+  phone: String
+  address: String
+  businessId: ID!
+}
+
+input UpdateCustomerInput {
+  customerId: ID!
+  name: String
+  email: String
+  phone: String
+  address: String
+}
+
+input JoinCustomerToBusinessInput {
+  customerId: ID!
+  businessId: ID!
+}
+
+input CreateServiceInput {
+  name: String!
+  description: String
+  pricingType: String!
+  pricePerHour: Float
+  flatFee: Float
+  estimatedDuration: Int
+  businessId: ID!
+}
+
+input UpdateServiceInput {
+  serviceId: ID!
+  name: String
+  description: String
+  pricingType: String
+  pricePerHour: Float
+  flatFee: Float
+  estimatedDuration: Int
+}
+
+input ServiceSnapshotInput {
+  serviceId: ID!
+  serviceName: String!
+  pricingType: String!
+  pricePerHour: Float
+  flatFee: Float
+  estimatedDuration: Int!
+}
+
+input CreateJobInput {
+  businessId: ID!
+  customerId: ID!
+  services: [ServiceSnapshotInput!]!
+  scheduledStartAt: AWSDateTime!
+  scheduledEndAt: AWSDateTime!
+  totalEstimatedCost: Float!
+  status: JobStatus!
+  crewId: ID
+}
+
+input UpdateJobInput {
+  jobId: ID!
+  services: [ServiceSnapshotInput!]
+  scheduledStartAt: AWSDateTime
+  scheduledEndAt: AWSDateTime
+  status: JobStatus
+  totalEstimatedCost: Float
+  crewId: ID
+}
+
+input LineItemInput {
+  description: String!
+  quantity: Int!
+  unitPrice: Float!
+}
+
+input CreateInvoiceInput {
+  businessId: ID!
+  customerId: ID!
+  issuedAt: AWSDateTime!
+  dueDate: AWSDate!
+  status: InvoiceStatus!
+  lineItems: [LineItemInput!]!
+  subTotal: Float!
+  tax: Float!
+  total: Float!
+}
+
+input UpdateInvoiceInput {
+  invoiceId: ID!
+  status: InvoiceStatus
+  paidAt: AWSDateTime
+  lineItems: [LineItemInput!]
+  dueDate: AWSDate
+}
+
+input CreatePaymentInput {
+  businessId: ID!
+  invoiceId: ID!
+  customerId: ID!
+  amount: Float!
+  method: String!
+  provider: String
+  externalPaymentId: String
+  paidAt: AWSDateTime!
+}
+
+input UpdatePaymentInput {
+  paymentId: ID!
+  amount: Float
+  method: String
+  paidAt: AWSDateTime
+}
+
+input CreateProposalInput {
+  businessId: ID!
+  customerId: ID!
+  validUntil: AWSDate!
+  status: ProposalStatus!
+  lineItems: [LineItemInput!]!
+  subTotal: Float!
+  tax: Float!
+  total: Float!
+}
+
+input UpdateProposalInput {
+  proposalId: ID!
+  status: ProposalStatus
+  validUntil: AWSDate
+}
+
+input CreateRecurringJobInput {
+  businessId: ID!
+  name: String!
+  customerId: ID!
+  services: [ServiceSnapshotInput!]!
+  recurrenceRule: String!
+  leadTimeDays: Int!
+  nextRunAt: AWSDateTime!
+  status: RecurringJobStatus!
+}
+
+input UpdateRecurringJobInput {
+  recurringId: ID!
+  status: RecurringJobStatus
+  nextRunAt: AWSDateTime
+}
+
+input CreateTimeEntryInput {
+  businessId: ID!
+  userId: ID!
+  crewId: ID
+  jobId: ID
+  startAt: AWSDateTime!
+  endAt: AWSDateTime!
+  duration: Int!
+  notes: String
+}
+
+input UpdateTimeEntryInput {
+  timeEntryId: ID!
+  endAt: AWSDateTime
+  duration: Int
+  notes: String
+}
+
+input CreateMaterialInput {
+  businessId: ID!
+  name: String!
+  unit: String!
+  unitCost: Float!
+  currentStock: Int!
+  reorderThreshold: Int!
+}
+
+input UpdateMaterialInput {
+  materialId: ID!
+  name: String
+  unit: String
+  unitCost: Float
+  currentStock: Int
+  reorderThreshold: Int
+}
+
+input CreateInventoryTransactionInput {
+  materialId: ID!
+  type: InventoryTxnType!
+  quantity: Int!
+  unitCost: Float!
+  relatedJob: ID
+  supplierId: ID
+  note: String
+}
+
+input UpdateInventoryTransactionInput {
+  txnId: ID!
+  quantity: Int
+  note: String
+}
+
+input CreateMaintenanceRecordInput {
+  equipmentId: ID!
+  serviceDate: AWSDate!
+  type: String!
+  provider: String!
+  notes: String
+  cost: Float
+  nextServiceDue: AWSDate
+}
+
+input UpdateMaintenanceRecordInput {
+  maintenanceId: ID!
+  notes: String
+  cost: Float
+  nextServiceDue: AWSDate
+}
+
+# Root query operations
+# Queries allow retrieving single entities or filtered lists based on input.
+# Common filters include ID, status, and date ranges, combined with pagination and sorting.
+
+type Query {
+  user(userId: ID!): User
+  business(businessId: ID!): Business
+  customer(customerId: ID!): Customer
+  service(serviceId: ID!): Service
+  job(jobId: ID!): Job
+  invoice(invoiceId: ID!): Invoice
+  payment(paymentId: ID!): Payment
+  proposal(proposalId: ID!): Proposal
+  recurringJob(recurringId: ID!): RecurringJob
+  equipment(equipmentId: ID!): Equipment
+  timeEntry(timeEntryId: ID!): TimeEntry
+  material(materialId: ID!): Material
+  inventoryTransaction(txnId: ID!): InventoryTransaction
+  maintenanceRecord(maintenanceId: ID!): MaintenanceRecord
+
+  businesses(input: BusinessListInput): [Business!]!
+  customers(input: CustomerListInput): [Customer!]!
+  services(input: ServiceListInput): [Service!]!
+  jobs(input: JobListInput): [Job!]!
+  invoices(input: InvoiceListInput): [Invoice!]!
+  payments(input: PaymentListInput): [Payment!]!
+  proposals(input: ProposalListInput): [Proposal!]!
+  recurringJobs(input: RecurringJobListInput): [RecurringJob!]!
+  equipmentList(input: EquipmentListInput): [Equipment!]!
+  timeEntries(input: TimeEntryListInput): [TimeEntry!]!
+  materials(input: MaterialListInput): [Material!]!
+  inventoryTransactions(
+    input: InventoryTransactionListInput
+  ): [InventoryTransaction!]!
+  maintenanceRecords(input: MaintenanceRecordListInput): [MaintenanceRecord!]!
+}
+
+type User {
+  userId: ID!
+  name: String!
+  email: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  businesses: [Business!]!
+  timeEntries: [TimeEntry!]!
+  notifications: [Notification!]!
+}
+
+type Business {
+  businessId: ID!
+  name: String!
+  address: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  customers: [Customer!]!
+  users: [BusinessUser!]!
+  services: [Service!]!
+  jobs: [Job!]!
+  crews: [Crew!]!
+  equipment: [Equipment!]!
+  invoices: [Invoice!]!
+  proposals: [Proposal!]!
+  recurringJobs: [RecurringJob!]!
+  materials: [Material!]!
+  expenses: [Expense!]!
+}
+
+type BusinessMemborship {
+  customerId: ID!
+  businessId: ID!
+  joinedAt: AWSDateTime!
+}
+
+type BusinessUser {
+  userId: ID!
+  name: String!
+  email: String!
+  role: BusinessUserRole!
+  joinedAt: AWSDateTime!
+}
+
+type Customer {
+  customerId: ID!
+  name: String!
+  email: String!
+  phone: String
+  address: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  jobs: [Job!]!
+  invoices: [Invoice!]!
+  payments: [Payment!]!
+  proposals: [Proposal!]!
+  recurringJobs: [RecurringJob!]!
+}
+
+type CustomerMembership {
+  customerId: ID!
+  businessId: ID!
+  joinedAt: AWSDateTime!
+}
+
+type Service {
+  serviceId: ID!
+  name: String!
+  description: String
+  pricingType: String!
+  pricePerHour: Float
+  flatFee: Float
+  estimatedDuration: Int!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type ServiceSnapshot {
+  serviceId: ID!
+  serviceName: String!
+  pricingType: String!
+  pricePerHour: Float
+  flatFee: Float
+  estimatedDuration: Int!
+}
+
+type Job {
+  jobId: ID!
+  customer: Customer!
+  crew: Crew!
+  services: [ServiceSnapshot!]!
+  totalEstimatedDuration: Int!
+  scheduledStartAt: AWSDateTime!
+  scheduledEndAt: AWSDateTime!
+  totalEstimatedCost: Float!
+  actualStartAt: AWSDateTime
+  actualEndAt: AWSDateTime
+  totalActualDuration: Int
+  status: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type LineItem {
+  description: String!
+  quantity: Int!
+  unitPrice: Float!
+  totalPrice: Float!
+}
+
+type Invoice {
+  invoiceId: ID!
+  customerId: ID!
+  status: String!
+  issuedAt: AWSDateTime!
+  dueDate: AWSDate!
+  paidAt: AWSDateTime
+  lineItems: [LineItem!]!
+  subTotal: Float!
+  tax: Float!
+  total: Float!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Payment {
+  paymentId: ID!
+  invoiceId: ID!
+  customerId: ID!
+  amount: Float!
+  method: String!
+  provider: String
+  externalPaymentId: String
+  paidAt: AWSDateTime!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Proposal {
+  proposalId: ID!
+  customerId: ID!
+  status: String!
+  validUntil: AWSDate!
+  lineItems: [LineItem!]!
+  subTotal: Float!
+  tax: Float!
+  total: Float!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type RecurringJob {
+  recurringId: ID!
+  name: String!
+  customerId: ID!
+  services: [ServiceSnapshot!]!
+  recurrenceRule: String!
+  leadTimeDays: Int!
+  nextRunAt: AWSDateTime!
+  status: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Equipment {
+  equipmentId: ID!
+  name: String!
+  type: String!
+  status: String!
+  purchaseDate: AWSDate!
+  lastServiceAt: AWSDate!
+  nextServiceDue: AWSDate!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type EquipmentAssignment {
+  equipmentId: ID!
+  jobId: ID!
+  crewId: ID!
+  scheduledStart: AWSDateTime!
+  scheduledEnd: AWSDateTime!
+}
+
+type Crew {
+  crewId: ID!
+  name: String!
+  members: [ID!]
+  jobs: [Job!]!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type TimeEntry {
+  timeEntryId: ID!
+  userId: ID!
+  crewId: ID
+  jobId: ID
+  startAt: AWSDateTime!
+  endAt: AWSDateTime!
+  duration: Int!
+  notes: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Material {
+  materialId: ID!
+  name: String!
+  unit: String!
+  unitCost: Float!
+  currentStock: Int!
+  reorderThreshold: Int!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type InventoryTransaction {
+  txnId: ID!
+  materialId: ID!
+  type: String!
+  quantity: Int!
+  relatedJob: ID
+  unitCost: Float!
+  supplierId: ID
+  note: String
+  createdAt: AWSDateTime!
+}
+
+type MaintenanceRecord {
+  maintenanceId: ID!
+  equipmentId: ID!
+  serviceDate: AWSDate!
+  type: String!
+  provider: String!
+  notes: String
+  cost: Float
+  nextServiceDue: AWSDate
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Notification {
+  notificationId: ID!
+  type: String!
+  level: String!
+  message: String!
+  relatedEntityType: String!
+  relatedEntityId: ID!
+  channels: [String!]
+  read: Boolean!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Expense {
+  expenseId: ID!
+  date: AWSDate!
+  amount: Float!
+  currency: String!
+  category: String!
+  description: String
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}

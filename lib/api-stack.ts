@@ -1,7 +1,10 @@
 import { Duration, Expiration, Stack, StackProps } from "aws-cdk-lib";
 import {
   AuthorizationType,
+  Code,
+  DynamoDbDataSource,
   FieldLogLevel,
+  FunctionRuntime,
   GraphqlApi,
   SchemaFile,
 } from "aws-cdk-lib/aws-appsync";
@@ -14,13 +17,16 @@ interface SproutOpsApiStackProps extends StackProps {
 }
 
 export class SproutOpsApiStack extends Stack {
+  private api: GraphqlApi;
+  private tableDataSource: DynamoDbDataSource;
+
   constructor(scope: Construct, id: string, props?: SproutOpsApiStackProps) {
     super(scope, id, props);
 
-    const api = new GraphqlApi(this, "SproutOpsGraphQLApi", {
+    this.api = new GraphqlApi(this, "SproutOpsGraphQLApi", {
       name: "sproutops-dev-graphql-api",
       definition: {
-        schema: SchemaFile.fromAsset("lib/graphql/shema.graphql"),
+        schema: SchemaFile.fromAsset("lib/graphql/schema.graphql"),
       },
       logConfig: {
         fieldLogLevel: FieldLogLevel.ALL,
@@ -37,9 +43,208 @@ export class SproutOpsApiStack extends Stack {
       },
     });
 
-    api.addDynamoDbDataSource(
+    this.tableDataSource = this.api.addDynamoDbDataSource(
       "SproutOpsTableDataSource",
       props!.sproutOpsTable
     );
+
+    // Business Resolvers
+    this.createQueryBusinessResolver();
+    this.createBusinessCrewsResolver();
+    this.createBusinessCustomersResolver();
+    this.createBusinessEquipmentResolver();
+    this.createBusinessExpensesResolver();
+    this.createBusinessInvoicesResolver();
+    this.createBusinessJobsResolver();
+    this.createBusinessMaterialsResolver();
+    this.createBusinessProposalsResolver();
+    this.createBusinessRecurringJobsResolver();
+    this.createBusinessServicesResolver();
+    this.createBusinessUsersResolver();
+
+    // Customer Resolvers
+    this.createCustomerJobsResolver();
+
+    // Job Resolvers
+    this.createJobCustomerResolver();
+  }
+
+  // Business Resolvers
+  private createQueryBusinessResolver() {
+    this.tableDataSource.createResolver("QueryBusinessResolver", {
+      typeName: "Query",
+      fieldName: "business",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Query.business.js"),
+    });
+  }
+
+  private createBusinessCrewsResolver() {
+    this.tableDataSource.createResolver("BusinessCrewsResolver", {
+      typeName: "Business",
+      fieldName: "crews",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Business.crews.js"),
+    });
+  }
+
+  private createBusinessCustomersResolver() {
+    const getMemberships = this.tableDataSource.createFunction(
+      "BusinessCustomersGetMembershipsFunction",
+      {
+        name: "BusinessCustomersGetMembershipsFunction",
+        runtime: FunctionRuntime.JS_1_0_0,
+        code: Code.fromAsset(
+          "dist/mapping-templates/Business.customers/get-memberships.js"
+        ),
+      }
+    );
+
+    const getCustomers = this.tableDataSource.createFunction(
+      "BusinessCustomersGetCustomersFunction",
+      {
+        name: "BusinessCustomersGetCustomersFunction",
+        runtime: FunctionRuntime.JS_1_0_0,
+        code: Code.fromAsset(
+          "dist/mapping-templates/Business.customers/get-customers.js"
+        ),
+      }
+    );
+
+    this.api.createResolver("BusinessCustomersResolver", {
+      typeName: "Business",
+      fieldName: "customers",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset(
+        "dist/mapping-templates/Business.customers/pipeline-resolver.js"
+      ),
+      pipelineConfig: [getMemberships, getCustomers],
+    });
+  }
+
+  private createBusinessEquipmentResolver() {
+    this.tableDataSource.createResolver("BusinessEquipmentResolver", {
+      typeName: "Business",
+      fieldName: "equipment",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Business.equipment.js"),
+    });
+  }
+
+  private createBusinessExpensesResolver() {
+    this.tableDataSource.createResolver("BusinessExpensesResolver", {
+      typeName: "Business",
+      fieldName: "expenses",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Business.expenses.js"),
+    });
+  }
+
+  private createBusinessInvoicesResolver() {
+    this.tableDataSource.createResolver("BusinessInvoicesResolver", {
+      typeName: "Business",
+      fieldName: "invoices",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Business.invoices.js"),
+    });
+  }
+
+  private createBusinessUsersResolver() {
+    const getMemberships = this.tableDataSource.createFunction(
+      "BusinessUsersGetMembershipsFunction",
+      {
+        name: "BusinessUsersGetMembershipsFunction",
+        runtime: FunctionRuntime.JS_1_0_0,
+        code: Code.fromAsset(
+          "dist/mapping-templates/Business.users/get-memberships.js"
+        ),
+      }
+    );
+
+    const getUsers = this.tableDataSource.createFunction(
+      "BusinessUsersGetUsersFunction",
+      {
+        name: "BusinessUsersGetUsersFunction",
+        runtime: FunctionRuntime.JS_1_0_0,
+        code: Code.fromAsset(
+          "dist/mapping-templates/Business.users/get-users.js"
+        ),
+      }
+    );
+
+    this.api.createResolver("BusinessUsersResolver", {
+      typeName: "Business",
+      fieldName: "users",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset(
+        "dist/mapping-templates/Business.users/pipeline-resolver.js"
+      ),
+      pipelineConfig: [getMemberships, getUsers],
+    });
+  }
+
+  private createBusinessJobsResolver() {
+    this.tableDataSource.createResolver("BusinessJobsResolver", {
+      typeName: "Business",
+      fieldName: "jobs",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Business.jobs.js"),
+    });
+  }
+
+  private createBusinessMaterialsResolver() {
+    this.tableDataSource.createResolver("BusinessMaterialsResolver", {
+      typeName: "Business",
+      fieldName: "materials",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Business.materials.js"),
+    });
+  }
+
+  private createBusinessProposalsResolver() {
+    this.tableDataSource.createResolver("BusinessProposalsResolver", {
+      typeName: "Business",
+      fieldName: "proposals",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Business.proposals.js"),
+    });
+  }
+
+  private createBusinessRecurringJobsResolver() {
+    this.tableDataSource.createResolver("BusinessRecurringJobsResolver", {
+      typeName: "Business",
+      fieldName: "recurringJobs",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Business.recurringJobs.js"),
+    });
+  }
+
+  private createBusinessServicesResolver() {
+    this.tableDataSource.createResolver("BusinessServicesResolver", {
+      typeName: "Business",
+      fieldName: "services",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Business.services.js"),
+    });
+  }
+
+  // Customer Resolvers
+  private createCustomerJobsResolver() {
+    this.tableDataSource.createResolver("CustomerJobsResolver", {
+      typeName: "Customer",
+      fieldName: "jobs",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Customer.jobs.js"),
+    });
+  }
+
+  // Job Resolvers
+  private createJobCustomerResolver() {
+    this.tableDataSource.createResolver("JobCustomerResolver", {
+      typeName: "Job",
+      fieldName: "customer",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Job.customer.js"),
+    });
   }
 }
