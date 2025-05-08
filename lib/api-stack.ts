@@ -70,6 +70,7 @@ export class SproutOpsApiStack extends Stack {
 
     // User Resolvers
     this.createQueryUserResolver();
+    this.createUserBusinessesResolver();
   }
 
   // Business Resolvers
@@ -152,40 +153,6 @@ export class SproutOpsApiStack extends Stack {
     });
   }
 
-  private createBusinessUsersResolver() {
-    const getMemberships = this.tableDataSource.createFunction(
-      "BusinessUsersGetMembershipsFunction",
-      {
-        name: "BusinessUsersGetMembershipsFunction",
-        runtime: FunctionRuntime.JS_1_0_0,
-        code: Code.fromAsset(
-          "dist/mapping-templates/Business.users/get-memberships.js"
-        ),
-      }
-    );
-
-    const getUsers = this.tableDataSource.createFunction(
-      "BusinessUsersGetUsersFunction",
-      {
-        name: "BusinessUsersGetUsersFunction",
-        runtime: FunctionRuntime.JS_1_0_0,
-        code: Code.fromAsset(
-          "dist/mapping-templates/Business.users/get-users.js"
-        ),
-      }
-    );
-
-    this.api.createResolver("BusinessUsersResolver", {
-      typeName: "Business",
-      fieldName: "users",
-      runtime: FunctionRuntime.JS_1_0_0,
-      code: Code.fromAsset(
-        "dist/mapping-templates/Business.users/pipeline-resolver.js"
-      ),
-      pipelineConfig: [getMemberships, getUsers],
-    });
-  }
-
   private createBusinessJobsResolver() {
     this.tableDataSource.createResolver("BusinessJobsResolver", {
       typeName: "Business",
@@ -231,6 +198,40 @@ export class SproutOpsApiStack extends Stack {
     });
   }
 
+  private createBusinessUsersResolver() {
+    const getMemberships = this.tableDataSource.createFunction(
+      "BusinessUsersGetMembershipsFunction",
+      {
+        name: "BusinessUsersGetMembershipsFunction",
+        runtime: FunctionRuntime.JS_1_0_0,
+        code: Code.fromAsset(
+          "dist/mapping-templates/Business.users/get-memberships.js"
+        ),
+      }
+    );
+
+    const getUsers = this.tableDataSource.createFunction(
+      "BusinessUsersGetUsersFunction",
+      {
+        name: "BusinessUsersGetUsersFunction",
+        runtime: FunctionRuntime.JS_1_0_0,
+        code: Code.fromAsset(
+          "dist/mapping-templates/Business.users/get-users.js"
+        ),
+      }
+    );
+
+    this.api.createResolver("BusinessUsersResolver", {
+      typeName: "Business",
+      fieldName: "users",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset(
+        "dist/mapping-templates/Business.users/pipeline-resolver.js"
+      ),
+      pipelineConfig: [getMemberships, getUsers],
+    });
+  }
+
   // Customer Resolvers
   private createCustomerJobsResolver() {
     this.tableDataSource.createResolver("CustomerJobsResolver", {
@@ -258,6 +259,40 @@ export class SproutOpsApiStack extends Stack {
       fieldName: "user",
       runtime: FunctionRuntime.JS_1_0_0,
       code: Code.fromAsset("dist/mapping-templates/Query.user.js"),
+    });
+  }
+
+  private createUserBusinessesResolver() {
+    const getMemberships = this.tableDataSource.createFunction(
+      "UserBusinessesGetMembershipsFunction",
+      {
+        name: "UserBusinessesGetMembershipsFunction",
+        runtime: FunctionRuntime.JS_1_0_0,
+        code: Code.fromAsset(
+          "dist/mapping-templates/User.businesses/get-memberships.js"
+        ),
+      }
+    );
+
+    const getBusinesses = this.tableDataSource.createFunction(
+      "UserBusinessesGetBusinessesFunction",
+      {
+        name: "UserBusinessesGetBusinessesFunction",
+        runtime: FunctionRuntime.JS_1_0_0,
+        code: Code.fromAsset(
+          "dist/mapping-templates/User.businesses/get-businesses.js"
+        ),
+      }
+    );
+
+    this.api.createResolver("UserBusinessesResolver", {
+      typeName: "User",
+      fieldName: "businesses",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset(
+        "dist/mapping-templates/User.businesses/pipeline-resolver.js"
+      ),
+      pipelineConfig: [getMemberships, getBusinesses],
     });
   }
 }

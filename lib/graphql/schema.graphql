@@ -827,9 +827,19 @@ type User {
   email: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
-  businesses: [Business!]!
+  businesses: [UserBusiness!]!
   timeEntries: [TimeEntry!]!
   notifications: [Notification!]!
+}
+
+type UserBusiness {
+  businessId: ID!
+  name: String!
+  address: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  role: BusinessUserRole!
+  joinedAt: AWSDateTime!
 }
 
 type Business {
