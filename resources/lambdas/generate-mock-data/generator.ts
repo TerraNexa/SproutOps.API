@@ -307,7 +307,7 @@ export function generateMockData(): Record<string, any>[] {
     // Time Entry
     items.push({
       PK: `BUS#${businessId}`,
-      SK: `TIME#USER#${userId}#${isoNow}#${timeEntryId}`,
+      SK: `TIME#${isoNow}#${timeEntryId}`,
       entityType: "TIME_ENTRY",
       timeEntryId,
       userId,
@@ -319,6 +319,11 @@ export function generateMockData(): Record<string, any>[] {
       notes: "Maintenance",
       createdAt: isoNow,
       updatedAt: isoNow,
+
+      GSI1PK: `USER#${userId}`,
+      GSI1SK: `TIME#${isoNow}#${timeEntryId}`,
+      GSI2PK: `CREW#${crewId}`,
+      GSI2SK: `TIME#${isoNow}#${timeEntryId}`,
     });
 
     // Material

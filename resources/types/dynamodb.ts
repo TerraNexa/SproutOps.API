@@ -347,7 +347,7 @@ export interface MaintenanceRecordItem extends BaseItem {
 export interface TimeEntryItem extends BaseItem {
   entityType: "TIME_ENTRY";
   PK: `BUS#${string}`;
-  SK: `TIME#${string}`;
+  SK: `TIME#${string}#${string}`;
   timeEntryId: string;
   userId: string;
   crewId?: string;
@@ -358,6 +358,12 @@ export interface TimeEntryItem extends BaseItem {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+
+  GSI1PK: `USER#${string}`;
+  GSI1SK: `TIME#${string}#${string}`;
+
+  GSI2PK: `CREW#${string}`;
+  GSI2SK: `TIME#${string}#${string}`;
 }
 
 // ========== MATERIALS ==========
