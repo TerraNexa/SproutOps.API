@@ -320,7 +320,7 @@ export function generateMockData(): Record<string, any>[] {
       createdAt: isoNow,
       updatedAt: isoNow,
       GSI6PK: `CUST#${customerId}`,
-      GSI6SK: isoNow,
+      GSI6SK: `RECUR#${recurringId}`,
     });
 
     // Time Entry
