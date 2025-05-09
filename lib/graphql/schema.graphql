@@ -1026,9 +1026,9 @@ type Crew {
 
 type TimeEntry {
   timeEntryId: ID!
-  userId: ID!
-  crewId: ID
-  jobId: ID
+  user: User!
+  crew: Crew
+  job: Job
   startAt: AWSDateTime!
   endAt: AWSDateTime!
   duration: Int!

@@ -71,6 +71,7 @@ export class SproutOpsApiStack extends Stack {
     // User Resolvers
     this.createQueryUserResolver();
     this.createUserBusinessesResolver();
+    this.createUserTimeEntriesResolver();
   }
 
   // Business Resolvers
@@ -293,6 +294,15 @@ export class SproutOpsApiStack extends Stack {
         "dist/mapping-templates/User.businesses/pipeline-resolver.js"
       ),
       pipelineConfig: [getMemberships, getBusinesses],
+    });
+  }
+
+  private createUserTimeEntriesResolver() {
+    this.tableDataSource.createResolver("UserTimeEntriesResolver", {
+      typeName: "User",
+      fieldName: "timeEntries",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/User.timeEntries.js"),
     });
   }
 }
