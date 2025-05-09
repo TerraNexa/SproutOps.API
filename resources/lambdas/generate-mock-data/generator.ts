@@ -312,15 +312,23 @@ export function generateMockData(): Record<string, any>[] {
       recurringId,
       name: "Weekly Service",
       customerId,
-      services: [],
+      services: [
+        {
+          serviceId: service.serviceId,
+          serviceName: service.name,
+          pricingType: service.pricingType,
+          flatFee: service.flatFee,
+          estimatedDuration: service.estimatedDuration,
+        },
+      ],
       recurrenceRule: "FREQ=WEEKLY",
       leadTimeDays: 2,
       nextRunAt: isoNow,
       status: "ACTIVE",
       createdAt: isoNow,
       updatedAt: isoNow,
-      GSI6PK: `CUST#${customerId}`,
-      GSI6SK: `RECUR#${recurringId}`,
+      GSI2PK: `CUST#${customerId}`,
+      GSI2SK: `RECUR#${recurringId}`,
     });
 
     // Time Entry

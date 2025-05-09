@@ -1005,7 +1005,7 @@ type Proposal {
 type RecurringJob {
   recurringId: ID!
   name: String!
-  customerId: ID!
+  customer: Customer!
   services: [ServiceSnapshot!]!
   recurrenceRule: String!
   leadTimeDays: Int!

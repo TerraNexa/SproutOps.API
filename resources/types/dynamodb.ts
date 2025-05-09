@@ -281,8 +281,8 @@ export interface RecurringJobItem extends BaseItem {
   status: RecurringJobStatus;
   createdAt: string;
   updatedAt: string;
-  GSI6PK: `CUST#${string}`;
-  GSI6SK: `RECUR#${string}`;
+  GSI2PK: `CUST#${string}`;
+  GSI2SK: `RECUR#${string}`;
 }
 
 // ========== EQUIPMENT ==========
