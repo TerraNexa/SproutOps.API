@@ -963,7 +963,7 @@ type LineItem {
 
 type Invoice {
   invoiceId: ID!
-  customerId: ID!
+  customer: Customer!
   status: String!
   issuedAt: AWSDateTime!
   dueDate: AWSDate!
@@ -978,8 +978,8 @@ type Invoice {
 
 type Payment {
   paymentId: ID!
-  invoiceId: ID!
-  customerId: ID!
+  invoice: Invoice!
+  customer: Customer!
   amount: Float!
   method: String!
   provider: String
@@ -991,7 +991,7 @@ type Payment {
 
 type Proposal {
   proposalId: ID!
-  customerId: ID!
+  customer: Customer!
   status: String!
   validUntil: AWSDate!
   lineItems: [LineItem!]!
@@ -1005,7 +1005,7 @@ type Proposal {
 type RecurringJob {
   recurringId: ID!
   name: String!
-  customerId: ID!
+  customer: Customer!
   services: [ServiceSnapshot!]!
   recurrenceRule: String!
   leadTimeDays: Int!

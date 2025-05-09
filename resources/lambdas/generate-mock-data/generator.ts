@@ -201,7 +201,6 @@ export function generateMockData(): Record<string, any>[] {
           serviceId: service.serviceId,
           serviceName: service.name,
           pricingType: service.pricingType,
-          pricePerHour: service.pricingType,
           flatFee: service.flatFee,
           estimatedDuration: service.estimatedDuration,
         },
@@ -256,14 +255,14 @@ export function generateMockData(): Record<string, any>[] {
       total: [99, 126.5, 115.5][i],
       createdAt: isoNow,
       updatedAt: isoNow,
-      GSI5PK: `CUST#${customerId}`,
-      GSI5SK: isoNow,
+      GSI2PK: `CUST#${customerId}`,
+      GSI2SK: `INV#${invoiceId}`,
     });
 
     // Payment
     items.push({
       PK: `BUS#${businessId}`,
-      SK: `PAY#${isoNow}#${paymentId}`,
+      SK: `PAY#${paymentId}`,
       entityType: "PAYMENT",
       paymentId,
       invoiceId,
@@ -274,9 +273,9 @@ export function generateMockData(): Record<string, any>[] {
       createdAt: isoNow,
       updatedAt: isoNow,
       GSI2PK: `CUST#${customerId}`,
-      GSI2SK: isoNow,
+      GSI2SK: `PAY#${paymentId}`,
       GSI5PK: `INV#${invoiceId}`,
-      GSI5SK: isoNow,
+      GSI5SK: `PAY#${paymentId}`,
     });
 
     // Proposal
@@ -301,8 +300,8 @@ export function generateMockData(): Record<string, any>[] {
       subTotal: 200,
       tax: 20,
       total: 220,
-      GSI5PK: `CUST#${customerId}`,
-      GSI5SK: isoNow,
+      GSI2PK: `CUST#${customerId}`,
+      GSI2SK: `PROP#${proposalId}`,
     });
 
     // Recurring Job
@@ -313,15 +312,23 @@ export function generateMockData(): Record<string, any>[] {
       recurringId,
       name: "Weekly Service",
       customerId,
-      services: [],
+      services: [
+        {
+          serviceId: service.serviceId,
+          serviceName: service.name,
+          pricingType: service.pricingType,
+          flatFee: service.flatFee,
+          estimatedDuration: service.estimatedDuration,
+        },
+      ],
       recurrenceRule: "FREQ=WEEKLY",
       leadTimeDays: 2,
       nextRunAt: isoNow,
       status: "ACTIVE",
       createdAt: isoNow,
       updatedAt: isoNow,
-      GSI6PK: `CUST#${customerId}`,
-      GSI6SK: isoNow,
+      GSI2PK: `CUST#${customerId}`,
+      GSI2SK: `RECUR#${recurringId}`,
     });
 
     // Time Entry

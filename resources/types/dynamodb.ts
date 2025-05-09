@@ -213,8 +213,8 @@ export interface InvoiceItem extends BaseItem {
   total: number;
   createdAt: string;
   updatedAt: string;
-  GSI5PK: string;
-  GSI5SK: string;
+  GSI2PK: `CUST#${string}`;
+  GSI2SK: `INV#${string}`;
 }
 
 // ========== PAYMENT ==========
@@ -235,10 +235,10 @@ export interface PaymentItem extends BaseItem {
   paidAt: string;
   createdAt: string;
   updatedAt: string;
-  GSI2PK: string;
-  GSI2SK: string;
-  GSI5PK: string;
-  GSI5SK: string;
+  GSI2PK: `CUST#${string}`;
+  GSI2SK: `PAY#${string}`;
+  GSI5PK: `INV#${string}`;
+  GSI5SK: `PAY#${string}`;
 }
 
 // ========== PROPOSAL ==========
@@ -259,8 +259,8 @@ export interface ProposalItem extends BaseItem {
   subTotal: number;
   tax: number;
   total: number;
-  GSI5PK: string;
-  GSI5SK: string;
+  GSI2PK: `CUST#${string}`;
+  GSI2SK: `PROP#${string}`;
 }
 
 // ========== RECURRING JOB ==========
@@ -281,8 +281,8 @@ export interface RecurringJobItem extends BaseItem {
   status: RecurringJobStatus;
   createdAt: string;
   updatedAt: string;
-  GSI6PK: string;
-  GSI6SK: string;
+  GSI2PK: `CUST#${string}`;
+  GSI2SK: `RECUR#${string}`;
 }
 
 // ========== EQUIPMENT ==========

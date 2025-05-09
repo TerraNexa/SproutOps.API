@@ -63,7 +63,12 @@ export class SproutOpsApiStack extends Stack {
     this.createBusinessUsersResolver();
 
     // Customer Resolvers
+    this.createQueryCustomerResolver();
+    this.createCustomerInvoicesResolver();
     this.createCustomerJobsResolver();
+    this.createCustomerPaymentsResolver();
+    this.createCustomerProposalsResolver();
+    this.createCustomerRecurringJobsResolver();
 
     // Job Resolvers
     this.createJobCustomerResolver();
@@ -235,12 +240,57 @@ export class SproutOpsApiStack extends Stack {
   }
 
   // Customer Resolvers
+  private createQueryCustomerResolver() {
+    this.tableDataSource.createResolver("QueryCustomerResolver", {
+      typeName: "Query",
+      fieldName: "customer",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Query.customer.js"),
+    });
+  }
+
+  private createCustomerInvoicesResolver() {
+    this.tableDataSource.createResolver("CustomerInvoicesResolver", {
+      typeName: "Customer",
+      fieldName: "invoices",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Customer.invoices.js"),
+    });
+  }
+
   private createCustomerJobsResolver() {
     this.tableDataSource.createResolver("CustomerJobsResolver", {
       typeName: "Customer",
       fieldName: "jobs",
       runtime: FunctionRuntime.JS_1_0_0,
       code: Code.fromAsset("dist/mapping-templates/Customer.jobs.js"),
+    });
+  }
+
+  private createCustomerPaymentsResolver() {
+    this.tableDataSource.createResolver("CustomerPaymentsResolver", {
+      typeName: "Customer",
+      fieldName: "payments",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Customer.payments.js"),
+    });
+  }
+
+  private createCustomerProposalsResolver() {
+    this.tableDataSource.createResolver("CustomerProposalsResolver", {
+      typeName: "Customer",
+      fieldName: "proposals",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Customer.proposals.js"),
+    });
+  }
+
+  private createCustomerRecurringJobsResolver() {
+    this.tableDataSource.createResolver("CustomerRecurringJobsResolver", {
+      typeName: "Customer",
+      fieldName: "recurringJobs",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Customer.recurringJobs.js"),
     });
   }
 
