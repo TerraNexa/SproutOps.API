@@ -255,14 +255,14 @@ export function generateMockData(): Record<string, any>[] {
       total: [99, 126.5, 115.5][i],
       createdAt: isoNow,
       updatedAt: isoNow,
-      GSI5PK: `CUST#${customerId}`,
-      GSI5SK: `INV#${invoiceId}`,
+      GSI2PK: `CUST#${customerId}`,
+      GSI2SK: `INV#${invoiceId}`,
     });
 
     // Payment
     items.push({
       PK: `BUS#${businessId}`,
-      SK: `PAY#${isoNow}#${paymentId}`,
+      SK: `PAY#${paymentId}`,
       entityType: "PAYMENT",
       paymentId,
       invoiceId,
@@ -273,9 +273,9 @@ export function generateMockData(): Record<string, any>[] {
       createdAt: isoNow,
       updatedAt: isoNow,
       GSI2PK: `CUST#${customerId}`,
-      GSI2SK: isoNow,
+      GSI2SK: `PAY#${paymentId}`,
       GSI5PK: `INV#${invoiceId}`,
-      GSI5SK: isoNow,
+      GSI5SK: `PAY#${paymentId}`,
     });
 
     // Proposal
@@ -300,8 +300,8 @@ export function generateMockData(): Record<string, any>[] {
       subTotal: 200,
       tax: 20,
       total: 220,
-      GSI5PK: `CUST#${customerId}`,
-      GSI5SK: isoNow,
+      GSI2PK: `CUST#${customerId}`,
+      GSI2SK: `PROP#${proposalId}`,
     });
 
     // Recurring Job

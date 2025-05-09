@@ -978,8 +978,8 @@ type Invoice {
 
 type Payment {
   paymentId: ID!
-  invoiceId: ID!
-  customerId: ID!
+  invoice: Invoice!
+  customer: Customer!
   amount: Float!
   method: String!
   provider: String
