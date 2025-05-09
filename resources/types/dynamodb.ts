@@ -4,6 +4,9 @@ export type ProposalStatus = "DRAFT" | "SENT" | "ACCEPTED" | "DECLINED";
 export type RecurringJobStatus = "ACTIVE" | "PAUSED" | "CANCELLED";
 export type EquipmentStatus = "AVAILABLE" | "IN_USE" | "MAINTENANCE";
 export type InventoryTxnType = "PURCHASE" | "CONSUMPTION";
+export type NotificationChannel = "EMAIL" | "SMS";
+export type NotificationLevel = "INFO" | "WARN" | "ERROR";
+export type NotificationType = "REMINDER" | "ALERT" | "SYSTEM";
 
 /**
  * Common base fields shared by all table items in the SproutOps schema.
@@ -347,7 +350,7 @@ export interface MaintenanceRecordItem extends BaseItem {
 export interface TimeEntryItem extends BaseItem {
   entityType: "TIME_ENTRY";
   PK: `BUS#${string}`;
-  SK: `TIME#${string}`;
+  SK: `TIME#${string}#${string}`;
   timeEntryId: string;
   userId: string;
   crewId?: string;
@@ -358,6 +361,12 @@ export interface TimeEntryItem extends BaseItem {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+
+  GSI1PK: `USER#${string}`;
+  GSI1SK: `TIME#${string}#${string}`;
+
+  GSI2PK: `CREW#${string}`;
+  GSI2SK: `TIME#${string}#${string}`;
 }
 
 // ========== MATERIALS ==========
@@ -409,6 +418,28 @@ export interface ExpenseItem extends BaseItem {
   category: string;
   date: string;
   description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ========== Notification ==========
+/**
+ *  Notification for a user
+ */
+export interface NotificationItem {
+  PK: `USER#${string}`;
+  SK: `NOTIF#${string}`;
+  entityType: "NOTIFICATION";
+  notificationId: string;
+  type: NotificationType;
+  level: NotificationLevel;
+  message: string;
+  relatedEntityType: string;
+  relatedEntityId: string;
+  channels: NotificationChannel[];
+  read: boolean;
+  readAt?: string;
+  dispatchedAt?: string;
   createdAt: string;
   updatedAt: string;
 }

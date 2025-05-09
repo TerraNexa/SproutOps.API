@@ -59,6 +59,12 @@ enum NotificationChannel {
   SMS
 }
 
+enum NotificationType {
+  REMINDER
+  ALERT
+  SYSTEM
+}
+
 # Scalar filter inputs for flexible querying
 input IDFilter {
   eq: ID
@@ -534,6 +540,10 @@ type Mutation {
     input: UpdateMaintenanceRecordInput!
   ): MaintenanceRecord!
   deleteMaintenanceRecord(maintenanceId: ID!): Boolean!
+
+  createNotification(input: CreateNotificationInput!): Notification!
+  markNotificationRead(notificationId: ID!): Notification!
+  deleteNotification(notificationId: ID!): Boolean!
 }
 
 # Mutation input types
@@ -784,6 +794,16 @@ input UpdateMaintenanceRecordInput {
   nextServiceDue: AWSDate
 }
 
+input CreateNotificationInput {
+  userId: ID!
+  type: NotificationType!
+  level: NotificationLevel!
+  message: String!
+  relatedEntityType: String!
+  relatedEntityId: ID!
+  channels: [NotificationChannel!]
+}
+
 # Root query operations
 # Queries allow retrieving single entities or filtered lists based on input.
 # Common filters include ID, status, and date ranges, combined with pagination and sorting.
@@ -827,9 +847,19 @@ type User {
   email: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
-  businesses: [Business!]!
+  businesses: [UserBusiness!]!
   timeEntries: [TimeEntry!]!
   notifications: [Notification!]!
+}
+
+type UserBusiness {
+  businessId: ID!
+  name: String!
+  address: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  role: BusinessUserRole!
+  joinedAt: AWSDateTime!
 }
 
 type Business {
@@ -1016,9 +1046,9 @@ type Crew {
 
 type TimeEntry {
   timeEntryId: ID!
-  userId: ID!
-  crewId: ID
-  jobId: ID
+  user: User!
+  crew: Crew
+  job: Job
   startAt: AWSDateTime!
   endAt: AWSDateTime!
   duration: Int!
@@ -1065,12 +1095,12 @@ type MaintenanceRecord {
 
 type Notification {
   notificationId: ID!
-  type: String!
-  level: String!
+  type: NotificationType!
+  level: NotificationLevel!
   message: String!
   relatedEntityType: String!
   relatedEntityId: ID!
-  channels: [String!]
+  channels: [NotificationChannel!]
   read: Boolean!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
