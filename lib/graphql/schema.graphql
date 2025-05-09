@@ -963,7 +963,7 @@ type LineItem {
 
 type Invoice {
   invoiceId: ID!
-  customerId: ID!
+  customer: Customer!
   status: String!
   issuedAt: AWSDateTime!
   dueDate: AWSDate!

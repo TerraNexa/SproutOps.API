@@ -256,7 +256,7 @@ export function generateMockData(): Record<string, any>[] {
       createdAt: isoNow,
       updatedAt: isoNow,
       GSI5PK: `CUST#${customerId}`,
-      GSI5SK: isoNow,
+      GSI5SK: `INV#${invoiceId}`,
     });
 
     // Payment

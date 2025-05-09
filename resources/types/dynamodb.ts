@@ -213,8 +213,8 @@ export interface InvoiceItem extends BaseItem {
   total: number;
   createdAt: string;
   updatedAt: string;
-  GSI5PK: string;
-  GSI5SK: string;
+  GSI5PK: `CUST#${string}`;
+  GSI5SK: `INV#${string}`;
 }
 
 // ========== PAYMENT ==========
