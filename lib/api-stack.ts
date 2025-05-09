@@ -63,6 +63,7 @@ export class SproutOpsApiStack extends Stack {
     this.createBusinessUsersResolver();
 
     // Customer Resolvers
+    this.createQueryCustomerResolver();
     this.createCustomerJobsResolver();
 
     // Job Resolvers
@@ -235,6 +236,14 @@ export class SproutOpsApiStack extends Stack {
   }
 
   // Customer Resolvers
+  private createQueryCustomerResolver() {
+    this.tableDataSource.createResolver("QueryCustomerResolver", {
+      typeName: "Query",
+      fieldName: "customer",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Query.customer.js"),
+    });
+  }
   private createCustomerJobsResolver() {
     this.tableDataSource.createResolver("CustomerJobsResolver", {
       typeName: "Customer",
