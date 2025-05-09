@@ -201,7 +201,6 @@ export function generateMockData(): Record<string, any>[] {
           serviceId: service.serviceId,
           serviceName: service.name,
           pricingType: service.pricingType,
-          pricePerHour: service.pricingType,
           flatFee: service.flatFee,
           estimatedDuration: service.estimatedDuration,
         },
