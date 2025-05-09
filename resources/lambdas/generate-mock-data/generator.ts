@@ -60,6 +60,26 @@ export function generateMockData(): Record<string, any>[] {
       GSI1SK: `USER#${userId}`,
     });
 
+    // Notifications
+    for (let i = 0; i < NUM; i++) {
+      const notificationId = uuidv4();
+      items.push({
+        PK: `USER#${userId}`,
+        SK: `NOTIF#${notificationId}`,
+        entityType: "NOTIFICATION",
+        notificationId,
+        type: ["ALERT", "REMINDER", "SYSTEM"][i],
+        level: ["INFO", "WARN", "ERROR"][i],
+        message: `Notification for user ${i + 1}`,
+        relatedEntityType: "JOB",
+        relatedEntityId: jobId,
+        channels: ["EMAIL", "SMS"],
+        read: false,
+        createdAt: isoNow,
+        updatedAt: isoNow,
+      });
+    }
+
     // Customer
     items.push({
       PK: `CUST#${customerId}`,
@@ -354,27 +374,6 @@ export function generateMockData(): Record<string, any>[] {
       supplierId: uuidv4(),
       note: "Refill",
       createdAt: isoNow,
-    });
-  }
-
-  // Notifications
-  for (let i = 0; i < NUM; i++) {
-    const notificationId = uuidv4();
-    const userId = `user-${i + 1}`;
-    items.push({
-      PK: `BUS#${businessId}`,
-      SK: `NOTIF#${notificationId}#${isoNow}`,
-      entityType: "NOTIFICATION",
-      notificationId,
-      type: "ALERT",
-      level: "INFO",
-      message: `Reminder for user ${i + 1}`,
-      relatedEntityType: "JOB",
-      relatedEntityId: uuidv4(),
-      channels: ["EMAIL"],
-      read: false,
-      createdAt: isoNow,
-      updatedAt: isoNow,
     });
   }
 

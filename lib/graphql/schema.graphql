@@ -59,6 +59,12 @@ enum NotificationChannel {
   SMS
 }
 
+enum NotificationType {
+  REMINDER
+  ALERT
+  SYSTEM
+}
+
 # Scalar filter inputs for flexible querying
 input IDFilter {
   eq: ID
@@ -534,6 +540,10 @@ type Mutation {
     input: UpdateMaintenanceRecordInput!
   ): MaintenanceRecord!
   deleteMaintenanceRecord(maintenanceId: ID!): Boolean!
+
+  createNotification(input: CreateNotificationInput!): Notification!
+  markNotificationRead(notificationId: ID!): Notification!
+  deleteNotification(notificationId: ID!): Boolean!
 }
 
 # Mutation input types
@@ -782,6 +792,16 @@ input UpdateMaintenanceRecordInput {
   notes: String
   cost: Float
   nextServiceDue: AWSDate
+}
+
+input CreateNotificationInput {
+  userId: ID!
+  type: NotificationType!
+  level: NotificationLevel!
+  message: String!
+  relatedEntityType: String!
+  relatedEntityId: ID!
+  channels: [NotificationChannel!]
 }
 
 # Root query operations
@@ -1075,12 +1095,12 @@ type MaintenanceRecord {
 
 type Notification {
   notificationId: ID!
-  type: String!
-  level: String!
+  type: NotificationType!
+  level: NotificationLevel!
   message: String!
   relatedEntityType: String!
   relatedEntityId: ID!
-  channels: [String!]
+  channels: [NotificationChannel!]
   read: Boolean!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
