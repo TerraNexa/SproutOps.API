@@ -31,6 +31,7 @@ export type Business = {
   crews: Array<Crew>;
   customers: Array<Customer>;
   equipment: Array<Equipment>;
+  expenses: Array<Expense>;
   invoices: Array<Invoice>;
   jobs: Array<Job>;
   materials: Array<Material>;
@@ -38,35 +39,49 @@ export type Business = {
   proposals: Array<Proposal>;
   recurringJobs: Array<RecurringJob>;
   services: Array<Service>;
-  suppliers: Array<Supplier>;
   updatedAt: Scalars['AWSDateTime']['output'];
-  users: Array<User>;
+  users: Array<BusinessUser>;
 };
 
-export type BusinessListInput = {
+export type BusinessCustomerFilterInput = {
   pagination?: InputMaybe<PaginationInput>;
-  sortBy?: InputMaybe<BusinessSortInput>;
-  where?: InputMaybe<BusinessWhereInput>;
+  sortBy?: InputMaybe<CustomerSortInput>;
+  where?: InputMaybe<CustomerWhereInput>;
 };
 
-export enum BusinessSortField {
-  Address = 'ADDRESS',
-  BusinessId = 'BUSINESS_ID',
-  CreatedAt = 'CREATED_AT',
-  Name = 'NAME',
-  UpdatedAt = 'UPDATED_AT'
+export type BusinessFilterInput = {
+  customers?: InputMaybe<BusinessCustomerFilterInput>;
+  equipment?: InputMaybe<EquipmentFilterInput>;
+  invoices?: InputMaybe<InvoiceFilterInput>;
+  jobs?: InputMaybe<JobFilterInput>;
+  materials?: InputMaybe<MaterialFilterInput>;
+  payments?: InputMaybe<PaymentFilterInput>;
+  proposals?: InputMaybe<ProposalFilterInput>;
+  recurringJobs?: InputMaybe<RecurringJobFilterInput>;
+  services?: InputMaybe<ServiceFilterInput>;
+};
+
+export type BusinessMemborship = {
+  __typename?: 'BusinessMemborship';
+  businessId: Scalars['ID']['output'];
+  customerId: Scalars['ID']['output'];
+  joinedAt: Scalars['AWSDateTime']['output'];
+};
+
+export type BusinessUser = {
+  __typename?: 'BusinessUser';
+  email: Scalars['String']['output'];
+  joinedAt: Scalars['AWSDateTime']['output'];
+  name: Scalars['String']['output'];
+  role: BusinessUserRole;
+  userId: Scalars['ID']['output'];
+};
+
+export enum BusinessUserRole {
+  Employee = 'EMPLOYEE',
+  Manager = 'MANAGER',
+  Owner = 'OWNER'
 }
-
-export type BusinessSortInput = {
-  direction: SortDirection;
-  field: BusinessSortField;
-};
-
-export type BusinessWhereInput = {
-  address?: InputMaybe<StringFilter>;
-  businessId?: InputMaybe<IdFilter>;
-  name?: InputMaybe<StringFilter>;
-};
 
 export type CreateBusinessInput = {
   address: Scalars['String']['input'];
@@ -75,21 +90,10 @@ export type CreateBusinessInput = {
 
 export type CreateCustomerInput = {
   address?: InputMaybe<Scalars['String']['input']>;
-  businessId?: InputMaybe<Scalars['ID']['input']>;
+  businessId: Scalars['ID']['input'];
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
   phone?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type CreateExpenseInput = {
-  amount: Scalars['Float']['input'];
-  category: Scalars['String']['input'];
-  currency: Scalars['String']['input'];
-  date: Scalars['AWSDate']['input'];
-  description?: InputMaybe<Scalars['String']['input']>;
-  jobId?: InputMaybe<Scalars['ID']['input']>;
-  receiptUrl?: InputMaybe<Scalars['String']['input']>;
-  vendorId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type CreateInventoryTransactionInput = {
@@ -116,6 +120,7 @@ export type CreateInvoiceInput = {
 
 export type CreateJobInput = {
   businessId: Scalars['ID']['input'];
+  crewId?: InputMaybe<Scalars['ID']['input']>;
   customerId: Scalars['ID']['input'];
   scheduledEndAt: Scalars['AWSDateTime']['input'];
   scheduledStartAt: Scalars['AWSDateTime']['input'];
@@ -149,15 +154,14 @@ export type CreateNotificationInput = {
   message: Scalars['String']['input'];
   relatedEntityId: Scalars['ID']['input'];
   relatedEntityType: Scalars['String']['input'];
-  type: Scalars['String']['input'];
+  type: NotificationType;
   userId: Scalars['ID']['input'];
 };
 
 export type CreatePaymentInput = {
   amount: Scalars['Float']['input'];
+  businessId: Scalars['ID']['input'];
   customerId: Scalars['ID']['input'];
-  dispatchChannels?: InputMaybe<Array<NotificationChannel>>;
-  externalChargeId?: InputMaybe<Scalars['String']['input']>;
   externalPaymentId?: InputMaybe<Scalars['String']['input']>;
   invoiceId: Scalars['ID']['input'];
   method: Scalars['String']['input'];
@@ -194,20 +198,11 @@ export type CreateServiceInput = {
   flatFee?: InputMaybe<Scalars['Float']['input']>;
   name: Scalars['String']['input'];
   pricePerHour?: InputMaybe<Scalars['Float']['input']>;
-  pricingType: PricingType;
-};
-
-export type CreateSupplierInput = {
-  address?: InputMaybe<Scalars['String']['input']>;
-  contactName?: InputMaybe<Scalars['String']['input']>;
-  email?: InputMaybe<Scalars['String']['input']>;
-  leadTimeDays?: InputMaybe<Scalars['Int']['input']>;
-  name: Scalars['String']['input'];
-  paymentTerms?: InputMaybe<Scalars['String']['input']>;
-  phone?: InputMaybe<Scalars['String']['input']>;
+  pricingType: Scalars['String']['input'];
 };
 
 export type CreateTimeEntryInput = {
+  businessId: Scalars['ID']['input'];
   crewId?: InputMaybe<Scalars['ID']['input']>;
   duration: Scalars['Int']['input'];
   endAt: Scalars['AWSDateTime']['input'];
@@ -218,50 +213,23 @@ export type CreateTimeEntryInput = {
 };
 
 export type CreateUserInput = {
-  businessId: Scalars['ID']['input'];
   email: Scalars['String']['input'];
   name: Scalars['String']['input'];
-  role: Scalars['String']['input'];
 };
 
-/** A crew or team within a business. */
 export type Crew = {
   __typename?: 'Crew';
   createdAt: Scalars['AWSDateTime']['output'];
   crewId: Scalars['ID']['output'];
-  members?: Maybe<Array<User>>;
+  jobs: Array<Job>;
+  members?: Maybe<Array<Scalars['ID']['output']>>;
   name: Scalars['String']['output'];
   updatedAt: Scalars['AWSDateTime']['output'];
 };
 
-export type CrewListInput = {
-  pagination?: InputMaybe<PaginationInput>;
-  sortBy?: InputMaybe<CrewSortInput>;
-  where?: InputMaybe<CrewWhereInput>;
-};
-
-export enum CrewSortField {
-  CreatedAt = 'CREATED_AT',
-  CrewId = 'CREW_ID',
-  Name = 'NAME',
-  UpdatedAt = 'UPDATED_AT'
-}
-
-export type CrewSortInput = {
-  direction: SortDirection;
-  field: CrewSortField;
-};
-
-export type CrewWhereInput = {
-  businessId?: InputMaybe<IdFilter>;
-  crewId?: InputMaybe<IdFilter>;
-};
-
-/** Customer account, may join businesses. */
 export type Customer = {
   __typename?: 'Customer';
   address?: Maybe<Scalars['String']['output']>;
-  businesses: Array<Business>;
   createdAt: Scalars['AWSDateTime']['output'];
   customerId: Scalars['ID']['output'];
   email: Scalars['String']['output'];
@@ -275,17 +243,18 @@ export type Customer = {
   updatedAt: Scalars['AWSDateTime']['output'];
 };
 
-export type CustomerListInput = {
-  pagination?: InputMaybe<PaginationInput>;
-  sortBy?: InputMaybe<CustomerSortInput>;
-  where?: InputMaybe<CustomerWhereInput>;
+export type CustomerFilterInput = {
+  invoices?: InputMaybe<InvoiceFilterInput>;
+  jobs?: InputMaybe<JobFilterInput>;
+  payments?: InputMaybe<PaymentFilterInput>;
+  proposals?: InputMaybe<ProposalFilterInput>;
+  recurringJobs?: InputMaybe<RecurringJobFilterInput>;
 };
 
-/** Link customer to business membership. */
 export type CustomerMembership = {
   __typename?: 'CustomerMembership';
-  business: Business;
-  customer: Customer;
+  businessId: Scalars['ID']['output'];
+  customerId: Scalars['ID']['output'];
   joinedAt: Scalars['AWSDateTime']['output'];
 };
 
@@ -303,8 +272,11 @@ export type CustomerSortInput = {
 };
 
 export type CustomerWhereInput = {
-  businessId?: InputMaybe<IdFilter>;
+  address?: InputMaybe<StringFilter>;
   customerId?: InputMaybe<IdFilter>;
+  email?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  phone?: InputMaybe<StringFilter>;
 };
 
 export type DateFilter = {
@@ -325,32 +297,30 @@ export type DateTimeFilter = {
   ne?: InputMaybe<Scalars['AWSDateTime']['input']>;
 };
 
-/** Equipment owned by a business. */
 export type Equipment = {
   __typename?: 'Equipment';
   createdAt: Scalars['AWSDateTime']['output'];
   equipmentId: Scalars['ID']['output'];
-  lastServiceAt?: Maybe<Scalars['AWSDate']['output']>;
-  location?: Maybe<Scalars['String']['output']>;
+  lastServiceAt: Scalars['AWSDate']['output'];
+  maintenanceRecords: Array<MaintenanceRecord>;
   name: Scalars['String']['output'];
-  nextServiceDue?: Maybe<Scalars['AWSDate']['output']>;
-  purchaseDate?: Maybe<Scalars['AWSDate']['output']>;
-  status: EquipmentStatus;
+  nextServiceDue: Scalars['AWSDate']['output'];
+  purchaseDate: Scalars['AWSDate']['output'];
+  status: Scalars['String']['output'];
   type: Scalars['String']['output'];
   updatedAt: Scalars['AWSDateTime']['output'];
 };
 
-/** Assignment of equipment to a job and crew. */
 export type EquipmentAssignment = {
   __typename?: 'EquipmentAssignment';
-  crew: Crew;
-  equipment: Equipment;
-  job: Job;
+  crewId: Scalars['ID']['output'];
+  equipmentId: Scalars['ID']['output'];
+  jobId: Scalars['ID']['output'];
   scheduledEnd: Scalars['AWSDateTime']['output'];
   scheduledStart: Scalars['AWSDateTime']['output'];
 };
 
-export type EquipmentListInput = {
+export type EquipmentFilterInput = {
   pagination?: InputMaybe<PaginationInput>;
   sortBy?: InputMaybe<EquipmentSortInput>;
   where?: InputMaybe<EquipmentWhereInput>;
@@ -375,12 +345,12 @@ export enum EquipmentStatus {
 }
 
 export type EquipmentWhereInput = {
-  businessId?: InputMaybe<IdFilter>;
   equipmentId?: InputMaybe<IdFilter>;
-  status?: InputMaybe<EquipmentStatus>;
+  name?: InputMaybe<StringFilter>;
+  status?: InputMaybe<StringFilter>;
+  type?: InputMaybe<StringFilter>;
 };
 
-/** Expense record for a business. */
 export type Expense = {
   __typename?: 'Expense';
   amount: Scalars['Float']['output'];
@@ -390,33 +360,7 @@ export type Expense = {
   date: Scalars['AWSDate']['output'];
   description?: Maybe<Scalars['String']['output']>;
   expenseId: Scalars['ID']['output'];
-  job?: Maybe<Job>;
-  receiptUrl?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['AWSDateTime']['output'];
-  vendor?: Maybe<Supplier>;
-};
-
-export type ExpenseListInput = {
-  pagination?: InputMaybe<PaginationInput>;
-  sortBy?: InputMaybe<ExpenseSortInput>;
-  where?: InputMaybe<ExpenseWhereInput>;
-};
-
-export enum ExpenseSortField {
-  Amount = 'AMOUNT',
-  Date = 'DATE',
-  ExpenseId = 'EXPENSE_ID'
-}
-
-export type ExpenseSortInput = {
-  direction: SortDirection;
-  field: ExpenseSortField;
-};
-
-export type ExpenseWhereInput = {
-  businessId?: InputMaybe<IdFilter>;
-  category?: InputMaybe<StringFilter>;
-  expenseId?: InputMaybe<IdFilter>;
 };
 
 export type FloatFilter = {
@@ -448,17 +392,16 @@ export type IntFilter = {
   nin?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
-/** Inventory transaction for material. */
 export type InventoryTransaction = {
   __typename?: 'InventoryTransaction';
   createdAt: Scalars['AWSDateTime']['output'];
-  material: Material;
+  materialId: Scalars['ID']['output'];
   note?: Maybe<Scalars['String']['output']>;
   quantity: Scalars['Int']['output'];
-  relatedJob?: Maybe<Job>;
-  supplier?: Maybe<Supplier>;
+  relatedJob?: Maybe<Scalars['ID']['output']>;
+  supplierId?: Maybe<Scalars['ID']['output']>;
   txnId: Scalars['ID']['output'];
-  type: InventoryTxnType;
+  type: Scalars['String']['output'];
   unitCost: Scalars['Float']['output'];
 };
 
@@ -480,9 +423,10 @@ export type InventoryTransactionSortInput = {
 };
 
 export type InventoryTransactionWhereInput = {
+  createdAt?: InputMaybe<DateTimeFilter>;
   materialId?: InputMaybe<IdFilter>;
   txnId?: InputMaybe<IdFilter>;
-  type?: InputMaybe<InventoryTxnType>;
+  type?: InputMaybe<StringFilter>;
 };
 
 export enum InventoryTxnType {
@@ -490,7 +434,6 @@ export enum InventoryTxnType {
   Purchase = 'PURCHASE'
 }
 
-/** An invoice issued to a customer. */
 export type Invoice = {
   __typename?: 'Invoice';
   createdAt: Scalars['AWSDateTime']['output'];
@@ -500,14 +443,14 @@ export type Invoice = {
   issuedAt: Scalars['AWSDateTime']['output'];
   lineItems: Array<LineItem>;
   paidAt?: Maybe<Scalars['AWSDateTime']['output']>;
-  status: InvoiceStatus;
+  status: Scalars['String']['output'];
   subTotal: Scalars['Float']['output'];
   tax: Scalars['Float']['output'];
   total: Scalars['Float']['output'];
   updatedAt: Scalars['AWSDateTime']['output'];
 };
 
-export type InvoiceListInput = {
+export type InvoiceFilterInput = {
   pagination?: InputMaybe<PaginationInput>;
   sortBy?: InputMaybe<InvoiceSortInput>;
   where?: InputMaybe<InvoiceWhereInput>;
@@ -536,31 +479,32 @@ export enum InvoiceStatus {
 }
 
 export type InvoiceWhereInput = {
-  businessId?: InputMaybe<IdFilter>;
   customerId?: InputMaybe<IdFilter>;
+  dueDate?: InputMaybe<DateFilter>;
   invoiceId?: InputMaybe<IdFilter>;
-  status?: InputMaybe<InvoiceStatus>;
+  issuedAt?: InputMaybe<DateTimeFilter>;
+  status?: InputMaybe<StringFilter>;
 };
 
-/** A scheduled job for a customer. */
 export type Job = {
   __typename?: 'Job';
   actualEndAt?: Maybe<Scalars['AWSDateTime']['output']>;
   actualStartAt?: Maybe<Scalars['AWSDateTime']['output']>;
   createdAt: Scalars['AWSDateTime']['output'];
+  crew: Crew;
   customer: Customer;
   jobId: Scalars['ID']['output'];
   scheduledEndAt: Scalars['AWSDateTime']['output'];
   scheduledStartAt: Scalars['AWSDateTime']['output'];
   services: Array<ServiceSnapshot>;
-  status: JobStatus;
+  status: Scalars['String']['output'];
   totalActualDuration?: Maybe<Scalars['Int']['output']>;
   totalEstimatedCost: Scalars['Float']['output'];
   totalEstimatedDuration: Scalars['Int']['output'];
   updatedAt: Scalars['AWSDateTime']['output'];
 };
 
-export type JobListInput = {
+export type JobFilterInput = {
   pagination?: InputMaybe<PaginationInput>;
   sortBy?: InputMaybe<JobSortInput>;
   where?: InputMaybe<JobWhereInput>;
@@ -588,10 +532,11 @@ export enum JobStatus {
 }
 
 export type JobWhereInput = {
-  businessId?: InputMaybe<IdFilter>;
   customerId?: InputMaybe<IdFilter>;
   jobId?: InputMaybe<IdFilter>;
-  status?: InputMaybe<JobStatus>;
+  scheduledEndAt?: InputMaybe<DateTimeFilter>;
+  scheduledStartAt?: InputMaybe<DateTimeFilter>;
+  status?: InputMaybe<StringFilter>;
 };
 
 export type JoinCustomerToBusinessInput = {
@@ -599,7 +544,12 @@ export type JoinCustomerToBusinessInput = {
   customerId: Scalars['ID']['input'];
 };
 
-/** Line item for invoices/proposals. */
+export type JoinUserToBusinessInput = {
+  businessId: Scalars['ID']['input'];
+  role: BusinessUserRole;
+  userId: Scalars['ID']['input'];
+};
+
 export type LineItem = {
   __typename?: 'LineItem';
   description: Scalars['String']['output'];
@@ -614,12 +564,11 @@ export type LineItemInput = {
   unitPrice: Scalars['Float']['input'];
 };
 
-/** Record of maintenance or repairs. */
 export type MaintenanceRecord = {
   __typename?: 'MaintenanceRecord';
   cost?: Maybe<Scalars['Float']['output']>;
   createdAt: Scalars['AWSDateTime']['output'];
-  equipment: Equipment;
+  equipmentId: Scalars['ID']['output'];
   maintenanceId: Scalars['ID']['output'];
   nextServiceDue?: Maybe<Scalars['AWSDate']['output']>;
   notes?: Maybe<Scalars['String']['output']>;
@@ -629,7 +578,7 @@ export type MaintenanceRecord = {
   updatedAt: Scalars['AWSDateTime']['output'];
 };
 
-export type MaintenanceRecordListInput = {
+export type MaintenanceRecordFilterInput = {
   pagination?: InputMaybe<PaginationInput>;
   sortBy?: InputMaybe<MaintenanceRecordSortInput>;
   where?: InputMaybe<MaintenanceRecordWhereInput>;
@@ -649,13 +598,14 @@ export type MaintenanceRecordSortInput = {
 export type MaintenanceRecordWhereInput = {
   equipmentId?: InputMaybe<IdFilter>;
   maintenanceId?: InputMaybe<IdFilter>;
+  serviceDate?: InputMaybe<DateFilter>;
 };
 
-/** Material definition with stock info. */
 export type Material = {
   __typename?: 'Material';
   createdAt: Scalars['AWSDateTime']['output'];
   currentStock: Scalars['Int']['output'];
+  inventoryTransactions: Array<InventoryTransaction>;
   materialId: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   reorderThreshold: Scalars['Int']['output'];
@@ -664,7 +614,7 @@ export type Material = {
   updatedAt: Scalars['AWSDateTime']['output'];
 };
 
-export type MaterialListInput = {
+export type MaterialFilterInput = {
   pagination?: InputMaybe<PaginationInput>;
   sortBy?: InputMaybe<MaterialSortInput>;
   where?: InputMaybe<MaterialWhereInput>;
@@ -684,25 +634,14 @@ export type MaterialSortInput = {
 };
 
 export type MaterialWhereInput = {
-  businessId?: InputMaybe<IdFilter>;
   materialId?: InputMaybe<IdFilter>;
+  name?: InputMaybe<StringFilter>;
 };
 
-/** Represents membership of a user in a business. */
-export type Membership = {
-  __typename?: 'Membership';
-  business: Business;
-  joinedAt: Scalars['AWSDateTime']['output'];
-  role: Scalars['String']['output'];
-  user: User;
-};
-
-/** All create, update, and delete operations. */
 export type Mutation = {
   __typename?: 'Mutation';
   createBusiness: Business;
   createCustomer: Customer;
-  createExpense: Expense;
   createInventoryTransaction: InventoryTransaction;
   createInvoice: Invoice;
   createJob: Job;
@@ -713,12 +652,10 @@ export type Mutation = {
   createProposal: Proposal;
   createRecurringJob: RecurringJob;
   createService: Service;
-  createSupplier: Supplier;
   createTimeEntry: TimeEntry;
   createUser: User;
   deleteBusiness: Scalars['Boolean']['output'];
   deleteCustomer: Scalars['Boolean']['output'];
-  deleteExpense: Scalars['Boolean']['output'];
   deleteInventoryTransaction: Scalars['Boolean']['output'];
   deleteInvoice: Scalars['Boolean']['output'];
   deleteJob: Scalars['Boolean']['output'];
@@ -729,14 +666,13 @@ export type Mutation = {
   deleteProposal: Scalars['Boolean']['output'];
   deleteRecurringJob: Scalars['Boolean']['output'];
   deleteService: Scalars['Boolean']['output'];
-  deleteSupplier: Scalars['Boolean']['output'];
   deleteTimeEntry: Scalars['Boolean']['output'];
   deleteUser: Scalars['Boolean']['output'];
   joinCustomerToBusiness: CustomerMembership;
+  joinUserToBusiness: Scalars['Boolean']['output'];
   markNotificationRead: Notification;
   updateBusiness: Business;
   updateCustomer: Customer;
-  updateExpense: Expense;
   updateInventoryTransaction: InventoryTransaction;
   updateInvoice: Invoice;
   updateJob: Job;
@@ -746,319 +682,241 @@ export type Mutation = {
   updateProposal: Proposal;
   updateRecurringJob: RecurringJob;
   updateService: Service;
-  updateSupplier: Supplier;
   updateTimeEntry: TimeEntry;
   updateUser: User;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationCreateBusinessArgs = {
   input: CreateBusinessInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationCreateCustomerArgs = {
   input: CreateCustomerInput;
 };
 
 
-/** All create, update, and delete operations. */
-export type MutationCreateExpenseArgs = {
-  input: CreateExpenseInput;
-};
-
-
-/** All create, update, and delete operations. */
 export type MutationCreateInventoryTransactionArgs = {
   input: CreateInventoryTransactionInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationCreateInvoiceArgs = {
   input: CreateInvoiceInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationCreateJobArgs = {
   input: CreateJobInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationCreateMaintenanceRecordArgs = {
   input: CreateMaintenanceRecordInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationCreateMaterialArgs = {
   input: CreateMaterialInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationCreateNotificationArgs = {
   input: CreateNotificationInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationCreatePaymentArgs = {
   input: CreatePaymentInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationCreateProposalArgs = {
   input: CreateProposalInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationCreateRecurringJobArgs = {
   input: CreateRecurringJobInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationCreateServiceArgs = {
   input: CreateServiceInput;
 };
 
 
-/** All create, update, and delete operations. */
-export type MutationCreateSupplierArgs = {
-  input: CreateSupplierInput;
-};
-
-
-/** All create, update, and delete operations. */
 export type MutationCreateTimeEntryArgs = {
   input: CreateTimeEntryInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationDeleteBusinessArgs = {
   businessId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationDeleteCustomerArgs = {
   customerId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
-export type MutationDeleteExpenseArgs = {
-  expenseId: Scalars['ID']['input'];
-};
-
-
-/** All create, update, and delete operations. */
 export type MutationDeleteInventoryTransactionArgs = {
   txnId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationDeleteInvoiceArgs = {
   invoiceId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationDeleteJobArgs = {
   jobId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationDeleteMaintenanceRecordArgs = {
   maintenanceId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationDeleteMaterialArgs = {
   materialId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationDeleteNotificationArgs = {
   notificationId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationDeletePaymentArgs = {
   paymentId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationDeleteProposalArgs = {
   proposalId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationDeleteRecurringJobArgs = {
   recurringId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationDeleteServiceArgs = {
   serviceId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
-export type MutationDeleteSupplierArgs = {
-  supplierId: Scalars['ID']['input'];
-};
-
-
-/** All create, update, and delete operations. */
 export type MutationDeleteTimeEntryArgs = {
   timeEntryId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationDeleteUserArgs = {
   userId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationJoinCustomerToBusinessArgs = {
   input: JoinCustomerToBusinessInput;
 };
 
 
-/** All create, update, and delete operations. */
+export type MutationJoinUserToBusinessArgs = {
+  input: JoinUserToBusinessInput;
+};
+
+
 export type MutationMarkNotificationReadArgs = {
   notificationId: Scalars['ID']['input'];
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationUpdateBusinessArgs = {
   input: UpdateBusinessInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationUpdateCustomerArgs = {
   input: UpdateCustomerInput;
 };
 
 
-/** All create, update, and delete operations. */
-export type MutationUpdateExpenseArgs = {
-  input: UpdateExpenseInput;
-};
-
-
-/** All create, update, and delete operations. */
 export type MutationUpdateInventoryTransactionArgs = {
   input: UpdateInventoryTransactionInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationUpdateInvoiceArgs = {
   input: UpdateInvoiceInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationUpdateJobArgs = {
   input: UpdateJobInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationUpdateMaintenanceRecordArgs = {
   input: UpdateMaintenanceRecordInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationUpdateMaterialArgs = {
   input: UpdateMaterialInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationUpdatePaymentArgs = {
   input: UpdatePaymentInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationUpdateProposalArgs = {
   input: UpdateProposalInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationUpdateRecurringJobArgs = {
   input: UpdateRecurringJobInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationUpdateServiceArgs = {
   input: UpdateServiceInput;
 };
 
 
-/** All create, update, and delete operations. */
-export type MutationUpdateSupplierArgs = {
-  input: UpdateSupplierInput;
-};
-
-
-/** All create, update, and delete operations. */
 export type MutationUpdateTimeEntryArgs = {
   input: UpdateTimeEntryInput;
 };
 
 
-/** All create, update, and delete operations. */
 export type MutationUpdateUserArgs = {
   input: UpdateUserInput;
 };
 
-/** In-app or outbound notification. */
 export type Notification = {
   __typename?: 'Notification';
   channels?: Maybe<Array<NotificationChannel>>;
   createdAt: Scalars['AWSDateTime']['output'];
-  dispatchedAt?: Maybe<Scalars['AWSDateTime']['output']>;
   level: NotificationLevel;
   message: Scalars['String']['output'];
   notificationId: Scalars['ID']['output'];
   read: Scalars['Boolean']['output'];
-  readAt?: Maybe<Scalars['AWSDateTime']['output']>;
   relatedEntityId: Scalars['ID']['output'];
   relatedEntityType: Scalars['String']['output'];
-  type: Scalars['String']['output'];
+  type: NotificationType;
   updatedAt: Scalars['AWSDateTime']['output'];
 };
 
@@ -1067,22 +925,24 @@ export enum NotificationChannel {
   Sms = 'SMS'
 }
 
+export type NotificationFilterInput = {
+  pagination?: InputMaybe<PaginationInput>;
+  sortBy?: InputMaybe<NotificationSortInput>;
+  where?: InputMaybe<NotificationWhereInput>;
+};
+
 export enum NotificationLevel {
   Error = 'ERROR',
   Info = 'INFO',
   Warn = 'WARN'
 }
 
-export type NotificationListInput = {
-  pagination?: InputMaybe<PaginationInput>;
-  sortBy?: InputMaybe<NotificationSortInput>;
-  where?: InputMaybe<NotificationWhereInput>;
-};
-
 export enum NotificationSortField {
   CreatedAt = 'CREATED_AT',
+  Level = 'LEVEL',
   NotificationId = 'NOTIFICATION_ID',
-  Read = 'READ'
+  Read = 'READ',
+  Type = 'TYPE'
 }
 
 export type NotificationSortInput = {
@@ -1090,10 +950,18 @@ export type NotificationSortInput = {
   field: NotificationSortField;
 };
 
+export enum NotificationType {
+  Alert = 'ALERT',
+  Reminder = 'REMINDER',
+  System = 'SYSTEM'
+}
+
 export type NotificationWhereInput = {
+  createdAt?: InputMaybe<DateTimeFilter>;
   level?: InputMaybe<NotificationLevel>;
   notificationId?: InputMaybe<IdFilter>;
   read?: InputMaybe<Scalars['Boolean']['input']>;
+  type?: InputMaybe<NotificationType>;
   userId?: InputMaybe<IdFilter>;
 };
 
@@ -1102,23 +970,21 @@ export type PaginationInput = {
   nextToken?: InputMaybe<Scalars['String']['input']>;
 };
 
-/** A payment made against an invoice. */
 export type Payment = {
   __typename?: 'Payment';
   amount: Scalars['Float']['output'];
+  createdAt: Scalars['AWSDateTime']['output'];
   customer: Customer;
-  dispatchChannels?: Maybe<Array<NotificationChannel>>;
-  dispatchedAt?: Maybe<Scalars['AWSDateTime']['output']>;
-  externalChargeId?: Maybe<Scalars['String']['output']>;
   externalPaymentId?: Maybe<Scalars['String']['output']>;
   invoice: Invoice;
   method: Scalars['String']['output'];
   paidAt: Scalars['AWSDateTime']['output'];
   paymentId: Scalars['ID']['output'];
   provider?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
-export type PaymentListInput = {
+export type PaymentFilterInput = {
   pagination?: InputMaybe<PaginationInput>;
   sortBy?: InputMaybe<PaymentSortInput>;
   where?: InputMaybe<PaymentWhereInput>;
@@ -1140,24 +1006,22 @@ export type PaymentSortInput = {
 export type PaymentWhereInput = {
   customerId?: InputMaybe<IdFilter>;
   invoiceId?: InputMaybe<IdFilter>;
+  paidAt?: InputMaybe<DateTimeFilter>;
   paymentId?: InputMaybe<IdFilter>;
 };
 
 export enum PricingType {
-  /** Flat fee pricing */
   Flat = 'FLAT',
-  /** Hourly pricing */
   Hourly = 'HOURLY'
 }
 
-/** A sales proposal or estimate sent to a customer. */
 export type Proposal = {
   __typename?: 'Proposal';
   createdAt: Scalars['AWSDateTime']['output'];
   customer: Customer;
   lineItems: Array<LineItem>;
   proposalId: Scalars['ID']['output'];
-  status: ProposalStatus;
+  status: Scalars['String']['output'];
   subTotal: Scalars['Float']['output'];
   tax: Scalars['Float']['output'];
   total: Scalars['Float']['output'];
@@ -1165,7 +1029,7 @@ export type Proposal = {
   validUntil: Scalars['AWSDate']['output'];
 };
 
-export type ProposalListInput = {
+export type ProposalFilterInput = {
   pagination?: InputMaybe<PaginationInput>;
   sortBy?: InputMaybe<ProposalSortInput>;
   where?: InputMaybe<ProposalWhereInput>;
@@ -1194,209 +1058,91 @@ export enum ProposalStatus {
 export type ProposalWhereInput = {
   customerId?: InputMaybe<IdFilter>;
   proposalId?: InputMaybe<IdFilter>;
-  status?: InputMaybe<ProposalStatus>;
+  status?: InputMaybe<StringFilter>;
+  validUntil?: InputMaybe<DateFilter>;
 };
 
-/** All read operations. */
 export type Query = {
   __typename?: 'Query';
   business?: Maybe<Business>;
-  businesses: Array<Business>;
-  crews: Array<Crew>;
   customer?: Maybe<Customer>;
-  customers: Array<Customer>;
-  equipment: Array<Equipment>;
-  expenses: Array<Expense>;
-  inventoryTransactions: Array<InventoryTransaction>;
+  equipment?: Maybe<Equipment>;
   invoice?: Maybe<Invoice>;
-  invoices: Array<Invoice>;
   job?: Maybe<Job>;
-  jobs: Array<Job>;
-  maintenanceRecords: Array<MaintenanceRecord>;
   material?: Maybe<Material>;
-  materials: Array<Material>;
-  notifications: Array<Notification>;
-  payments: Array<Payment>;
+  payment?: Maybe<Payment>;
   proposal?: Maybe<Proposal>;
-  proposals: Array<Proposal>;
   recurringJob?: Maybe<RecurringJob>;
-  recurringJobs: Array<RecurringJob>;
   service?: Maybe<Service>;
-  services: Array<Service>;
-  suppliers: Array<Supplier>;
-  timeEntries: Array<TimeEntry>;
   user?: Maybe<User>;
-  users: Array<User>;
 };
 
 
-/** All read operations. */
 export type QueryBusinessArgs = {
   businessId: Scalars['ID']['input'];
+  filter?: InputMaybe<BusinessFilterInput>;
 };
 
 
-/** All read operations. */
-export type QueryBusinessesArgs = {
-  input?: InputMaybe<BusinessListInput>;
-};
-
-
-/** All read operations. */
-export type QueryCrewsArgs = {
-  input?: InputMaybe<CrewListInput>;
-};
-
-
-/** All read operations. */
 export type QueryCustomerArgs = {
   customerId: Scalars['ID']['input'];
+  filter?: InputMaybe<CustomerFilterInput>;
 };
 
 
-/** All read operations. */
-export type QueryCustomersArgs = {
-  input?: InputMaybe<CustomerListInput>;
-};
-
-
-/** All read operations. */
 export type QueryEquipmentArgs = {
-  input?: InputMaybe<EquipmentListInput>;
+  businessId: Scalars['ID']['input'];
+  equipmentId: Scalars['ID']['input'];
 };
 
 
-/** All read operations. */
-export type QueryExpensesArgs = {
-  input?: InputMaybe<ExpenseListInput>;
-};
-
-
-/** All read operations. */
-export type QueryInventoryTransactionsArgs = {
-  input?: InputMaybe<InventoryTransactionListInput>;
-};
-
-
-/** All read operations. */
 export type QueryInvoiceArgs = {
   businessId: Scalars['ID']['input'];
   invoiceId: Scalars['ID']['input'];
 };
 
 
-/** All read operations. */
-export type QueryInvoicesArgs = {
-  input?: InputMaybe<InvoiceListInput>;
-};
-
-
-/** All read operations. */
 export type QueryJobArgs = {
   businessId: Scalars['ID']['input'];
   jobId: Scalars['ID']['input'];
 };
 
 
-/** All read operations. */
-export type QueryJobsArgs = {
-  input?: InputMaybe<JobListInput>;
-};
-
-
-/** All read operations. */
-export type QueryMaintenanceRecordsArgs = {
-  input?: InputMaybe<MaintenanceRecordListInput>;
-};
-
-
-/** All read operations. */
 export type QueryMaterialArgs = {
+  businessId: Scalars['ID']['input'];
   materialId: Scalars['ID']['input'];
 };
 
 
-/** All read operations. */
-export type QueryMaterialsArgs = {
-  input?: InputMaybe<MaterialListInput>;
+export type QueryPaymentArgs = {
+  businessId: Scalars['ID']['input'];
+  paymentId: Scalars['ID']['input'];
 };
 
 
-/** All read operations. */
-export type QueryNotificationsArgs = {
-  input?: InputMaybe<NotificationListInput>;
-};
-
-
-/** All read operations. */
-export type QueryPaymentsArgs = {
-  input?: InputMaybe<PaymentListInput>;
-};
-
-
-/** All read operations. */
 export type QueryProposalArgs = {
   businessId: Scalars['ID']['input'];
   proposalId: Scalars['ID']['input'];
 };
 
 
-/** All read operations. */
-export type QueryProposalsArgs = {
-  input?: InputMaybe<ProposalListInput>;
-};
-
-
-/** All read operations. */
 export type QueryRecurringJobArgs = {
   businessId: Scalars['ID']['input'];
   recurringId: Scalars['ID']['input'];
 };
 
 
-/** All read operations. */
-export type QueryRecurringJobsArgs = {
-  input?: InputMaybe<RecurringJobListInput>;
-};
-
-
-/** All read operations. */
 export type QueryServiceArgs = {
   businessId: Scalars['ID']['input'];
   serviceId: Scalars['ID']['input'];
 };
 
 
-/** All read operations. */
-export type QueryServicesArgs = {
-  input?: InputMaybe<ServiceListInput>;
-};
-
-
-/** All read operations. */
-export type QuerySuppliersArgs = {
-  input?: InputMaybe<SupplierListInput>;
-};
-
-
-/** All read operations. */
-export type QueryTimeEntriesArgs = {
-  input?: InputMaybe<TimeEntryListInput>;
-};
-
-
-/** All read operations. */
 export type QueryUserArgs = {
+  filter?: InputMaybe<UserFilterInput>;
   userId: Scalars['ID']['input'];
 };
 
-
-/** All read operations. */
-export type QueryUsersArgs = {
-  input?: InputMaybe<UserListInput>;
-};
-
-/** Template for recurring jobs. */
 export type RecurringJob = {
   __typename?: 'RecurringJob';
   createdAt: Scalars['AWSDateTime']['output'];
@@ -1407,11 +1153,11 @@ export type RecurringJob = {
   recurrenceRule: Scalars['String']['output'];
   recurringId: Scalars['ID']['output'];
   services: Array<ServiceSnapshot>;
-  status: RecurringJobStatus;
+  status: Scalars['String']['output'];
   updatedAt: Scalars['AWSDateTime']['output'];
 };
 
-export type RecurringJobListInput = {
+export type RecurringJobFilterInput = {
   pagination?: InputMaybe<PaginationInput>;
   sortBy?: InputMaybe<RecurringJobSortInput>;
   where?: InputMaybe<RecurringJobWhereInput>;
@@ -1440,48 +1186,45 @@ export enum RecurringJobStatus {
 export type RecurringJobWhereInput = {
   customerId?: InputMaybe<IdFilter>;
   recurringId?: InputMaybe<IdFilter>;
-  status?: InputMaybe<RecurringJobStatus>;
+  status?: InputMaybe<StringFilter>;
 };
 
-/** A service offered by a business. */
 export type Service = {
   __typename?: 'Service';
   createdAt: Scalars['AWSDateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
-  estimatedDuration?: Maybe<Scalars['Int']['output']>;
+  estimatedDuration: Scalars['Int']['output'];
   flatFee?: Maybe<Scalars['Float']['output']>;
   name: Scalars['String']['output'];
   pricePerHour?: Maybe<Scalars['Float']['output']>;
-  pricingType: PricingType;
+  pricingType: Scalars['String']['output'];
   serviceId: Scalars['ID']['output'];
   updatedAt: Scalars['AWSDateTime']['output'];
 };
 
-export type ServiceListInput = {
+export type ServiceFilterInput = {
   pagination?: InputMaybe<PaginationInput>;
   sortBy?: InputMaybe<ServiceSortInput>;
   where?: InputMaybe<ServiceWhereInput>;
 };
 
-/** Snapshot of a service at booking time. */
 export type ServiceSnapshot = {
   __typename?: 'ServiceSnapshot';
-  actualDuration?: Maybe<Scalars['Int']['output']>;
-  actualEndAt?: Maybe<Scalars['AWSDateTime']['output']>;
-  actualStartAt?: Maybe<Scalars['AWSDateTime']['output']>;
-  estimatedDuration?: Maybe<Scalars['Int']['output']>;
+  estimatedDuration: Scalars['Int']['output'];
   flatFee?: Maybe<Scalars['Float']['output']>;
   pricePerHour?: Maybe<Scalars['Float']['output']>;
-  pricingType: PricingType;
+  pricingType: Scalars['String']['output'];
   serviceId: Scalars['ID']['output'];
   serviceName: Scalars['String']['output'];
 };
 
 export type ServiceSnapshotInput = {
-  estimatedDuration?: InputMaybe<Scalars['Int']['input']>;
+  estimatedDuration: Scalars['Int']['input'];
   flatFee?: InputMaybe<Scalars['Float']['input']>;
   pricePerHour?: InputMaybe<Scalars['Float']['input']>;
+  pricingType: Scalars['String']['input'];
   serviceId: Scalars['ID']['input'];
+  serviceName: Scalars['String']['input'];
 };
 
 export enum ServiceSortField {
@@ -1497,7 +1240,8 @@ export type ServiceSortInput = {
 };
 
 export type ServiceWhereInput = {
-  businessId?: InputMaybe<IdFilter>;
+  name?: InputMaybe<StringFilter>;
+  pricingType?: InputMaybe<StringFilter>;
   serviceId?: InputMaybe<IdFilter>;
 };
 
@@ -1515,75 +1259,6 @@ export type StringFilter = {
   startsWith?: InputMaybe<Scalars['String']['input']>;
 };
 
-/** Real-time subscription for app events. */
-export type Subscription = {
-  __typename?: 'Subscription';
-  /** Invoice paid within a business */
-  invoicePaid: Invoice;
-  /** Job updated within a business */
-  jobUpdated: Job;
-  /** New notification for a user */
-  notificationCreated: Notification;
-};
-
-
-/** Real-time subscription for app events. */
-export type SubscriptionInvoicePaidArgs = {
-  businessId: Scalars['ID']['input'];
-};
-
-
-/** Real-time subscription for app events. */
-export type SubscriptionJobUpdatedArgs = {
-  businessId: Scalars['ID']['input'];
-};
-
-
-/** Real-time subscription for app events. */
-export type SubscriptionNotificationCreatedArgs = {
-  userId: Scalars['ID']['input'];
-};
-
-/** Supplier or vendor profile. */
-export type Supplier = {
-  __typename?: 'Supplier';
-  address?: Maybe<Scalars['String']['output']>;
-  contactName?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['AWSDateTime']['output'];
-  email?: Maybe<Scalars['String']['output']>;
-  leadTimeDays?: Maybe<Scalars['Int']['output']>;
-  materials?: Maybe<Array<Scalars['String']['output']>>;
-  name: Scalars['String']['output'];
-  paymentTerms?: Maybe<Scalars['String']['output']>;
-  phone?: Maybe<Scalars['String']['output']>;
-  supplierId: Scalars['ID']['output'];
-  updatedAt: Scalars['AWSDateTime']['output'];
-};
-
-export type SupplierListInput = {
-  pagination?: InputMaybe<PaginationInput>;
-  sortBy?: InputMaybe<SupplierSortInput>;
-  where?: InputMaybe<SupplierWhereInput>;
-};
-
-export enum SupplierSortField {
-  CreatedAt = 'CREATED_AT',
-  Name = 'NAME',
-  SupplierId = 'SUPPLIER_ID',
-  UpdatedAt = 'UPDATED_AT'
-}
-
-export type SupplierSortInput = {
-  direction: SortDirection;
-  field: SupplierSortField;
-};
-
-export type SupplierWhereInput = {
-  businessId?: InputMaybe<IdFilter>;
-  supplierId?: InputMaybe<IdFilter>;
-};
-
-/** A time entry logged by a user or crew. */
 export type TimeEntry = {
   __typename?: 'TimeEntry';
   createdAt: Scalars['AWSDateTime']['output'];
@@ -1598,7 +1273,7 @@ export type TimeEntry = {
   user: User;
 };
 
-export type TimeEntryListInput = {
+export type TimeEntryFilterInput = {
   pagination?: InputMaybe<PaginationInput>;
   sortBy?: InputMaybe<TimeEntrySortInput>;
   where?: InputMaybe<TimeEntryWhereInput>;
@@ -1618,9 +1293,10 @@ export type TimeEntrySortInput = {
 };
 
 export type TimeEntryWhereInput = {
-  businessId?: InputMaybe<IdFilter>;
   crewId?: InputMaybe<IdFilter>;
+  endAt?: InputMaybe<DateTimeFilter>;
   jobId?: InputMaybe<IdFilter>;
+  startAt?: InputMaybe<DateTimeFilter>;
   timeEntryId?: InputMaybe<IdFilter>;
   userId?: InputMaybe<IdFilter>;
 };
@@ -1639,13 +1315,6 @@ export type UpdateCustomerInput = {
   phone?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type UpdateExpenseInput = {
-  amount?: InputMaybe<Scalars['Float']['input']>;
-  category?: InputMaybe<Scalars['String']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  expenseId: Scalars['ID']['input'];
-};
-
 export type UpdateInventoryTransactionInput = {
   note?: InputMaybe<Scalars['String']['input']>;
   quantity?: InputMaybe<Scalars['Int']['input']>;
@@ -1661,6 +1330,7 @@ export type UpdateInvoiceInput = {
 };
 
 export type UpdateJobInput = {
+  crewId?: InputMaybe<Scalars['ID']['input']>;
   jobId: Scalars['ID']['input'];
   scheduledEndAt?: InputMaybe<Scalars['AWSDateTime']['input']>;
   scheduledStartAt?: InputMaybe<Scalars['AWSDateTime']['input']>;
@@ -1687,8 +1357,9 @@ export type UpdateMaterialInput = {
 
 export type UpdatePaymentInput = {
   amount?: InputMaybe<Scalars['Float']['input']>;
+  method?: InputMaybe<Scalars['String']['input']>;
+  paidAt?: InputMaybe<Scalars['AWSDateTime']['input']>;
   paymentId: Scalars['ID']['input'];
-  status?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateProposalInput = {
@@ -1709,19 +1380,8 @@ export type UpdateServiceInput = {
   flatFee?: InputMaybe<Scalars['Float']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   pricePerHour?: InputMaybe<Scalars['Float']['input']>;
-  pricingType?: InputMaybe<PricingType>;
+  pricingType?: InputMaybe<Scalars['String']['input']>;
   serviceId: Scalars['ID']['input'];
-};
-
-export type UpdateSupplierInput = {
-  address?: InputMaybe<Scalars['String']['input']>;
-  contactName?: InputMaybe<Scalars['String']['input']>;
-  email?: InputMaybe<Scalars['String']['input']>;
-  leadTimeDays?: InputMaybe<Scalars['Int']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-  paymentTerms?: InputMaybe<Scalars['String']['input']>;
-  phone?: InputMaybe<Scalars['String']['input']>;
-  supplierId: Scalars['ID']['input'];
 };
 
 export type UpdateTimeEntryInput = {
@@ -1734,44 +1394,33 @@ export type UpdateTimeEntryInput = {
 export type UpdateUserInput = {
   email?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  role?: InputMaybe<Scalars['String']['input']>;
   userId: Scalars['ID']['input'];
 };
 
 export type User = {
   __typename?: 'User';
-  businesses: Array<Business>;
+  businesses: Array<UserBusiness>;
   createdAt: Scalars['AWSDateTime']['output'];
   email: Scalars['String']['output'];
   name: Scalars['String']['output'];
-  role: Scalars['String']['output'];
+  notifications: Array<Notification>;
   timeEntries: Array<TimeEntry>;
   updatedAt: Scalars['AWSDateTime']['output'];
   userId: Scalars['ID']['output'];
 };
 
-export type UserListInput = {
-  pagination?: InputMaybe<PaginationInput>;
-  sortBy?: InputMaybe<UserSortInput>;
-  where?: InputMaybe<UserWhereInput>;
+export type UserBusiness = {
+  __typename?: 'UserBusiness';
+  address: Scalars['String']['output'];
+  businessId: Scalars['ID']['output'];
+  createdAt: Scalars['AWSDateTime']['output'];
+  joinedAt: Scalars['AWSDateTime']['output'];
+  name: Scalars['String']['output'];
+  role: BusinessUserRole;
+  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
-export enum UserSortField {
-  CreatedAt = 'CREATED_AT',
-  Email = 'EMAIL',
-  Name = 'NAME',
-  Role = 'ROLE',
-  UpdatedAt = 'UPDATED_AT',
-  UserId = 'USER_ID'
-}
-
-export type UserSortInput = {
-  direction: SortDirection;
-  field: UserSortField;
-};
-
-export type UserWhereInput = {
-  businessId?: InputMaybe<IdFilter>;
-  role?: InputMaybe<StringFilter>;
-  userId?: InputMaybe<IdFilter>;
+export type UserFilterInput = {
+  notifications?: InputMaybe<NotificationFilterInput>;
+  timeEntries?: InputMaybe<TimeEntryFilterInput>;
 };
