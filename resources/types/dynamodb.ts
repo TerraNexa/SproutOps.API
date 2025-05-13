@@ -165,7 +165,7 @@ export interface JobItem extends BaseItem {
   createdAt: string;
   updatedAt: string;
   GSI2PK: `CUST#${string}`;
-  GSI2SK: string;
+  GSI2SK: `JOB#${string}`;
 }
 
 /**

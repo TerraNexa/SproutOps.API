@@ -134,29 +134,29 @@ enum SortDirection {
   DESC
 }
 
-enum BusinessSortField {
-  BUSINESS_ID
-  NAME
-  ADDRESS
-  CREATED_AT
-  UPDATED_AT
+input BusinessFilterInput {
+  customers: BusinessCustomerFilterInput
+  equipment: EquipmentFilterInput
+  invoices: InvoiceFilterInput
+  jobs: JobFilterInput
+  materials: MaterialFilterInput
+  payments: PaymentFilterInput
+  proposals: ProposalFilterInput
+  recurringJobs: RecurringJobFilterInput
+  services: ServiceFilterInput
 }
 
-input BusinessSortInput {
-  field: BusinessSortField!
-  direction: SortDirection!
+input UserFilterInput {
+  timeEntries: TimeEntryFilterInput
+  notifications: NotificationFilterInput
 }
 
-input BusinessWhereInput {
-  businessId: IDFilter
-  name: StringFilter
-  address: StringFilter
-}
-
-input BusinessListInput {
-  where: BusinessWhereInput
-  sortBy: BusinessSortInput
-  pagination: PaginationInput
+input CustomerFilterInput {
+  jobs: JobFilterInput
+  invoices: InvoiceFilterInput
+  payments: PaymentFilterInput
+  proposals: ProposalFilterInput
+  recurringJobs: RecurringJobFilterInput
 }
 
 # Entity-specific sort and filter inputs
@@ -182,7 +182,7 @@ input CustomerSortInput {
   direction: SortDirection!
 }
 
-input CustomerListInput {
+input BusinessCustomerFilterInput {
   where: CustomerWhereInput
   sortBy: CustomerSortInput
   pagination: PaginationInput
@@ -206,7 +206,7 @@ input ServiceSortInput {
   direction: SortDirection!
 }
 
-input ServiceListInput {
+input ServiceFilterInput {
   where: ServiceWhereInput
   sortBy: ServiceSortInput
   pagination: PaginationInput
@@ -235,7 +235,7 @@ input JobSortInput {
   direction: SortDirection!
 }
 
-input JobListInput {
+input JobFilterInput {
   where: JobWhereInput
   sortBy: JobSortInput
   pagination: PaginationInput
@@ -264,7 +264,7 @@ input InvoiceSortInput {
   direction: SortDirection!
 }
 
-input InvoiceListInput {
+input InvoiceFilterInput {
   where: InvoiceWhereInput
   sortBy: InvoiceSortInput
   pagination: PaginationInput
@@ -290,7 +290,7 @@ input PaymentSortInput {
   direction: SortDirection!
 }
 
-input PaymentListInput {
+input PaymentFilterInput {
   where: PaymentWhereInput
   sortBy: PaymentSortInput
   pagination: PaginationInput
@@ -316,7 +316,7 @@ input ProposalSortInput {
   direction: SortDirection!
 }
 
-input ProposalListInput {
+input ProposalFilterInput {
   where: ProposalWhereInput
   sortBy: ProposalSortInput
   pagination: PaginationInput
@@ -342,7 +342,7 @@ input RecurringJobSortInput {
   direction: SortDirection!
 }
 
-input RecurringJobListInput {
+input RecurringJobFilterInput {
   where: RecurringJobWhereInput
   sortBy: RecurringJobSortInput
   pagination: PaginationInput
@@ -367,7 +367,7 @@ input EquipmentSortInput {
   direction: SortDirection!
 }
 
-input EquipmentListInput {
+input EquipmentFilterInput {
   where: EquipmentWhereInput
   sortBy: EquipmentSortInput
   pagination: PaginationInput
@@ -395,7 +395,7 @@ input TimeEntrySortInput {
   direction: SortDirection!
 }
 
-input TimeEntryListInput {
+input TimeEntryFilterInput {
   where: TimeEntryWhereInput
   sortBy: TimeEntrySortInput
   pagination: PaginationInput
@@ -419,7 +419,7 @@ input MaterialSortInput {
   direction: SortDirection!
 }
 
-input MaterialListInput {
+input MaterialFilterInput {
   where: MaterialWhereInput
   sortBy: MaterialSortInput
   pagination: PaginationInput
@@ -466,9 +466,37 @@ input MaintenanceRecordSortInput {
   direction: SortDirection!
 }
 
-input MaintenanceRecordListInput {
+input MaintenanceRecordFilterInput {
   where: MaintenanceRecordWhereInput
   sortBy: MaintenanceRecordSortInput
+  pagination: PaginationInput
+}
+
+input NotificationWhereInput {
+  notificationId: IDFilter
+  userId: IDFilter
+  level: NotificationLevel
+  type: NotificationType
+  read: Boolean
+  createdAt: DateTimeFilter
+}
+
+input NotificationSortInput {
+  field: NotificationSortField!
+  direction: SortDirection!
+}
+
+enum NotificationSortField {
+  NOTIFICATION_ID
+  CREATED_AT
+  READ
+  TYPE
+  LEVEL
+}
+
+input NotificationFilterInput {
+  where: NotificationWhereInput
+  sortBy: NotificationSortInput
   pagination: PaginationInput
 }
 
@@ -809,36 +837,17 @@ input CreateNotificationInput {
 # Common filters include ID, status, and date ranges, combined with pagination and sorting.
 
 type Query {
-  user(userId: ID!): User
-  business(businessId: ID!): Business
-  customer(customerId: ID!): Customer
-  service(serviceId: ID!): Service
-  job(jobId: ID!): Job
-  invoice(invoiceId: ID!): Invoice
-  payment(paymentId: ID!): Payment
-  proposal(proposalId: ID!): Proposal
-  recurringJob(recurringId: ID!): RecurringJob
-  equipment(equipmentId: ID!): Equipment
-  timeEntry(timeEntryId: ID!): TimeEntry
-  material(materialId: ID!): Material
-  inventoryTransaction(txnId: ID!): InventoryTransaction
-  maintenanceRecord(maintenanceId: ID!): MaintenanceRecord
-
-  businesses(input: BusinessListInput): [Business!]!
-  customers(input: CustomerListInput): [Customer!]!
-  services(input: ServiceListInput): [Service!]!
-  jobs(input: JobListInput): [Job!]!
-  invoices(input: InvoiceListInput): [Invoice!]!
-  payments(input: PaymentListInput): [Payment!]!
-  proposals(input: ProposalListInput): [Proposal!]!
-  recurringJobs(input: RecurringJobListInput): [RecurringJob!]!
-  equipmentList(input: EquipmentListInput): [Equipment!]!
-  timeEntries(input: TimeEntryListInput): [TimeEntry!]!
-  materials(input: MaterialListInput): [Material!]!
-  inventoryTransactions(
-    input: InventoryTransactionListInput
-  ): [InventoryTransaction!]!
-  maintenanceRecords(input: MaintenanceRecordListInput): [MaintenanceRecord!]!
+  user(userId: ID!, filter: UserFilterInput): User
+  business(businessId: ID!, filter: BusinessFilterInput): Business
+  customer(customerId: ID!, filter: CustomerFilterInput): Customer
+  service(businessId: ID!, serviceId: ID!): Service
+  job(businessId: ID!, jobId: ID!): Job
+  invoice(businessId: ID!, invoiceId: ID!): Invoice
+  payment(businessId: ID!, paymentId: ID!): Payment
+  proposal(businessId: ID!, proposalId: ID!): Proposal
+  recurringJob(businessId: ID!, recurringId: ID!): RecurringJob
+  equipment(businessId: ID!, equipmentId: ID!): Equipment
+  material(businessId: ID!, materialId: ID!): Material
 }
 
 type User {
@@ -1025,6 +1034,7 @@ type Equipment {
   nextServiceDue: AWSDate!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
+  maintenanceRecords: [MaintenanceRecord!]!
 }
 
 type EquipmentAssignment {
@@ -1066,6 +1076,7 @@ type Material {
   reorderThreshold: Int!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
+  inventoryTransactions: [InventoryTransaction!]!
 }
 
 type InventoryTransaction {
