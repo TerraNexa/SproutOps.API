@@ -70,6 +70,9 @@ export class SproutOpsApiStack extends Stack {
     this.createCustomerProposalsResolver();
     this.createCustomerRecurringJobsResolver();
 
+    // Invoice Resolvers
+    this.createQueryInvoiceResolver();
+
     // Job Resolvers
     this.createQueryJobResolver();
     this.createJobCrewResolver();
@@ -296,6 +299,16 @@ export class SproutOpsApiStack extends Stack {
       fieldName: "recurringJobs",
       runtime: FunctionRuntime.JS_1_0_0,
       code: Code.fromAsset("dist/mapping-templates/Customer.recurringJobs.js"),
+    });
+  }
+
+  // Invoice Resolvers
+  private createQueryInvoiceResolver() {
+    this.tableDataSource.createResolver("QueryInvoiceResolver", {
+      typeName: "Query",
+      fieldName: "invoice",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Query.invoice.js"),
     });
   }
 

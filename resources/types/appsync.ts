@@ -219,12 +219,10 @@ export type CreateUserInput = {
 
 export type Crew = {
   __typename?: 'Crew';
-  createdAt: Scalars['AWSDateTime']['output'];
   crewId: Scalars['ID']['output'];
   jobs: Array<Job>;
-  members?: Maybe<Array<Scalars['ID']['output']>>;
+  members?: Maybe<Array<User>>;
   name: Scalars['String']['output'];
-  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export type Customer = {
@@ -299,7 +297,6 @@ export type DateTimeFilter = {
 
 export type Equipment = {
   __typename?: 'Equipment';
-  createdAt: Scalars['AWSDateTime']['output'];
   equipmentId: Scalars['ID']['output'];
   lastServiceAt: Scalars['AWSDate']['output'];
   maintenanceRecords: Array<MaintenanceRecord>;
@@ -308,7 +305,6 @@ export type Equipment = {
   purchaseDate: Scalars['AWSDate']['output'];
   status: Scalars['String']['output'];
   type: Scalars['String']['output'];
-  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export type EquipmentAssignment = {
@@ -355,12 +351,10 @@ export type Expense = {
   __typename?: 'Expense';
   amount: Scalars['Float']['output'];
   category: Scalars['String']['output'];
-  createdAt: Scalars['AWSDateTime']['output'];
   currency: Scalars['String']['output'];
   date: Scalars['AWSDate']['output'];
   description?: Maybe<Scalars['String']['output']>;
   expenseId: Scalars['ID']['output'];
-  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export type FloatFilter = {
@@ -436,7 +430,6 @@ export enum InventoryTxnType {
 
 export type Invoice = {
   __typename?: 'Invoice';
-  createdAt: Scalars['AWSDateTime']['output'];
   customer: Customer;
   dueDate: Scalars['AWSDate']['output'];
   invoiceId: Scalars['ID']['output'];
@@ -447,7 +440,6 @@ export type Invoice = {
   subTotal: Scalars['Float']['output'];
   tax: Scalars['Float']['output'];
   total: Scalars['Float']['output'];
-  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export type InvoiceFilterInput = {
@@ -490,7 +482,6 @@ export type Job = {
   __typename?: 'Job';
   actualEndAt?: Maybe<Scalars['AWSDateTime']['output']>;
   actualStartAt?: Maybe<Scalars['AWSDateTime']['output']>;
-  createdAt: Scalars['AWSDateTime']['output'];
   crew: Crew;
   customer: Customer;
   jobId: Scalars['ID']['output'];
@@ -501,7 +492,6 @@ export type Job = {
   totalActualDuration?: Maybe<Scalars['Int']['output']>;
   totalEstimatedCost: Scalars['Float']['output'];
   totalEstimatedDuration: Scalars['Int']['output'];
-  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export type JobFilterInput = {
@@ -567,7 +557,6 @@ export type LineItemInput = {
 export type MaintenanceRecord = {
   __typename?: 'MaintenanceRecord';
   cost?: Maybe<Scalars['Float']['output']>;
-  createdAt: Scalars['AWSDateTime']['output'];
   equipmentId: Scalars['ID']['output'];
   maintenanceId: Scalars['ID']['output'];
   nextServiceDue?: Maybe<Scalars['AWSDate']['output']>;
@@ -575,7 +564,6 @@ export type MaintenanceRecord = {
   provider: Scalars['String']['output'];
   serviceDate: Scalars['AWSDate']['output'];
   type: Scalars['String']['output'];
-  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export type MaintenanceRecordFilterInput = {
@@ -603,7 +591,6 @@ export type MaintenanceRecordWhereInput = {
 
 export type Material = {
   __typename?: 'Material';
-  createdAt: Scalars['AWSDateTime']['output'];
   currentStock: Scalars['Int']['output'];
   inventoryTransactions: Array<InventoryTransaction>;
   materialId: Scalars['ID']['output'];
@@ -611,7 +598,6 @@ export type Material = {
   reorderThreshold: Scalars['Int']['output'];
   unit: Scalars['String']['output'];
   unitCost: Scalars['Float']['output'];
-  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export type MaterialFilterInput = {
@@ -909,7 +895,6 @@ export type MutationUpdateUserArgs = {
 export type Notification = {
   __typename?: 'Notification';
   channels?: Maybe<Array<NotificationChannel>>;
-  createdAt: Scalars['AWSDateTime']['output'];
   level: NotificationLevel;
   message: Scalars['String']['output'];
   notificationId: Scalars['ID']['output'];
@@ -917,7 +902,6 @@ export type Notification = {
   relatedEntityId: Scalars['ID']['output'];
   relatedEntityType: Scalars['String']['output'];
   type: NotificationType;
-  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export enum NotificationChannel {
@@ -973,7 +957,6 @@ export type PaginationInput = {
 export type Payment = {
   __typename?: 'Payment';
   amount: Scalars['Float']['output'];
-  createdAt: Scalars['AWSDateTime']['output'];
   customer: Customer;
   externalPaymentId?: Maybe<Scalars['String']['output']>;
   invoice: Invoice;
@@ -981,7 +964,6 @@ export type Payment = {
   paidAt: Scalars['AWSDateTime']['output'];
   paymentId: Scalars['ID']['output'];
   provider?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export type PaymentFilterInput = {
@@ -1017,7 +999,6 @@ export enum PricingType {
 
 export type Proposal = {
   __typename?: 'Proposal';
-  createdAt: Scalars['AWSDateTime']['output'];
   customer: Customer;
   lineItems: Array<LineItem>;
   proposalId: Scalars['ID']['output'];
@@ -1025,7 +1006,6 @@ export type Proposal = {
   subTotal: Scalars['Float']['output'];
   tax: Scalars['Float']['output'];
   total: Scalars['Float']['output'];
-  updatedAt: Scalars['AWSDateTime']['output'];
   validUntil: Scalars['AWSDate']['output'];
 };
 
@@ -1145,7 +1125,6 @@ export type QueryUserArgs = {
 
 export type RecurringJob = {
   __typename?: 'RecurringJob';
-  createdAt: Scalars['AWSDateTime']['output'];
   customer: Customer;
   leadTimeDays: Scalars['Int']['output'];
   name: Scalars['String']['output'];
@@ -1154,7 +1133,6 @@ export type RecurringJob = {
   recurringId: Scalars['ID']['output'];
   services: Array<ServiceSnapshot>;
   status: Scalars['String']['output'];
-  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export type RecurringJobFilterInput = {
@@ -1191,7 +1169,6 @@ export type RecurringJobWhereInput = {
 
 export type Service = {
   __typename?: 'Service';
-  createdAt: Scalars['AWSDateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
   estimatedDuration: Scalars['Int']['output'];
   flatFee?: Maybe<Scalars['Float']['output']>;
@@ -1199,7 +1176,6 @@ export type Service = {
   pricePerHour?: Maybe<Scalars['Float']['output']>;
   pricingType: Scalars['String']['output'];
   serviceId: Scalars['ID']['output'];
-  updatedAt: Scalars['AWSDateTime']['output'];
 };
 
 export type ServiceFilterInput = {
@@ -1261,7 +1237,6 @@ export type StringFilter = {
 
 export type TimeEntry = {
   __typename?: 'TimeEntry';
-  createdAt: Scalars['AWSDateTime']['output'];
   crew?: Maybe<Crew>;
   duration: Scalars['Int']['output'];
   endAt: Scalars['AWSDateTime']['output'];
@@ -1269,7 +1244,6 @@ export type TimeEntry = {
   notes?: Maybe<Scalars['String']['output']>;
   startAt: Scalars['AWSDateTime']['output'];
   timeEntryId: Scalars['ID']['output'];
-  updatedAt: Scalars['AWSDateTime']['output'];
   user: User;
 };
 
