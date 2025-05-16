@@ -910,8 +910,6 @@ type Customer {
   email: String!
   phone: String
   address: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
   jobs: [Job!]!
   invoices: [Invoice!]!
   payments: [Payment!]!
