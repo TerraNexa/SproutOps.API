@@ -1,15 +1,15 @@
 import { Context } from "@aws-appsync/utils";
 import { get } from "@aws-appsync/utils/dynamodb";
-import { InvoiceItem } from "../types/dynamodb";
+import { CustomerItem, InvoiceItem } from "../types/dynamodb";
 import { QueryInvoiceArgs } from "../types/appsync";
 
 export function request(ctx: Context<QueryInvoiceArgs>) {
-  const { businessId, invoiceId } = ctx.args;
+  const invoice: InvoiceItem = ctx.source;
 
-  return get<InvoiceItem>({
+  return get<CustomerItem>({
     key: {
-      PK: `BUS#${businessId}`,
-      SK: `INV#${invoiceId}`,
+      PK: `CUST#${invoice.customerId}`,
+      SK: `PROFILE`,
     },
   });
 }

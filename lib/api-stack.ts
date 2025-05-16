@@ -72,6 +72,7 @@ export class SproutOpsApiStack extends Stack {
 
     // Invoice Resolvers
     this.createQueryInvoiceResolver();
+    this.createInvoiceCustomerResolver();
 
     // Job Resolvers
     this.createQueryJobResolver();
@@ -309,6 +310,15 @@ export class SproutOpsApiStack extends Stack {
       fieldName: "invoice",
       runtime: FunctionRuntime.JS_1_0_0,
       code: Code.fromAsset("dist/mapping-templates/Query.invoice.js"),
+    });
+  }
+
+  private createInvoiceCustomerResolver() {
+    this.tableDataSource.createResolver("InvoiceCustomerResolver", {
+      typeName: "Invoice",
+      fieldName: "customer",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Invoice.customer.js"),
     });
   }
 
