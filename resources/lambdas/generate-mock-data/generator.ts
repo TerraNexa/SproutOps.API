@@ -227,6 +227,7 @@ export function generateMockData(): Record<string, any>[] {
       entityType: "JOB_CREW_ASSIGNMENT",
       jobId,
       crewId,
+      businessId,
       assignedAt: isoNow,
       GSI1PK: `CREW#${crewId}`,
       GSI1SK: `JOB#${jobId}`,

@@ -71,6 +71,8 @@ export class SproutOpsApiStack extends Stack {
     this.createCustomerRecurringJobsResolver();
 
     // Job Resolvers
+    this.createQueryJobResolver();
+    this.createJobCrewResolver();
     this.createJobCustomerResolver();
 
     // Service Resolvers
@@ -298,6 +300,47 @@ export class SproutOpsApiStack extends Stack {
   }
 
   // Job Resolvers
+  private createQueryJobResolver() {
+    this.tableDataSource.createResolver("QueryJobResolver", {
+      typeName: "Query",
+      fieldName: "job",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset("dist/mapping-templates/Query.job.js"),
+    });
+  }
+
+  private createJobCrewResolver() {
+    const getAssignment = this.tableDataSource.createFunction(
+      "JobCrewGetAssignmentFunction",
+      {
+        name: "JobCrewGetAssignmentFunction",
+        runtime: FunctionRuntime.JS_1_0_0,
+        code: Code.fromAsset(
+          "dist/mapping-templates/Job.crew/get-assignment.js"
+        ),
+      }
+    );
+
+    const getCrew = this.tableDataSource.createFunction(
+      "JobCrewGetCrewFunction",
+      {
+        name: "JobCrewGetCrewFunction",
+        runtime: FunctionRuntime.JS_1_0_0,
+        code: Code.fromAsset("dist/mapping-templates/Job.crew/get-crew.js"),
+      }
+    );
+
+    this.api.createResolver("JobCrewResolver", {
+      typeName: "Job",
+      fieldName: "crew",
+      runtime: FunctionRuntime.JS_1_0_0,
+      code: Code.fromAsset(
+        "dist/mapping-templates/Job.crew/pipeline-resolver.js"
+      ),
+      pipelineConfig: [getAssignment, getCrew],
+    });
+  }
+
   private createJobCustomerResolver() {
     this.tableDataSource.createResolver("JobCustomerResolver", {
       typeName: "Job",

@@ -933,8 +933,6 @@ type Service {
   pricePerHour: Float
   flatFee: Float
   estimatedDuration: Int!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type ServiceSnapshot {
@@ -959,8 +957,6 @@ type Job {
   actualEndAt: AWSDateTime
   totalActualDuration: Int
   status: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type LineItem {
@@ -981,8 +977,6 @@ type Invoice {
   subTotal: Float!
   tax: Float!
   total: Float!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Payment {
@@ -994,8 +988,6 @@ type Payment {
   provider: String
   externalPaymentId: String
   paidAt: AWSDateTime!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Proposal {
@@ -1007,8 +999,6 @@ type Proposal {
   subTotal: Float!
   tax: Float!
   total: Float!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type RecurringJob {
@@ -1020,8 +1010,6 @@ type RecurringJob {
   leadTimeDays: Int!
   nextRunAt: AWSDateTime!
   status: String!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Equipment {
@@ -1032,8 +1020,6 @@ type Equipment {
   purchaseDate: AWSDate!
   lastServiceAt: AWSDate!
   nextServiceDue: AWSDate!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
   maintenanceRecords: [MaintenanceRecord!]!
 }
 
@@ -1048,10 +1034,8 @@ type EquipmentAssignment {
 type Crew {
   crewId: ID!
   name: String!
-  members: [ID!]
+  members: [User!]
   jobs: [Job!]!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type TimeEntry {
@@ -1063,8 +1047,6 @@ type TimeEntry {
   endAt: AWSDateTime!
   duration: Int!
   notes: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Material {
@@ -1074,8 +1056,6 @@ type Material {
   unitCost: Float!
   currentStock: Int!
   reorderThreshold: Int!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
   inventoryTransactions: [InventoryTransaction!]!
 }
 
@@ -1100,8 +1080,6 @@ type MaintenanceRecord {
   notes: String
   cost: Float
   nextServiceDue: AWSDate
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Notification {
@@ -1113,8 +1091,6 @@ type Notification {
   relatedEntityId: ID!
   channels: [NotificationChannel!]
   read: Boolean!
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }
 
 type Expense {
@@ -1124,6 +1100,4 @@ type Expense {
   currency: String!
   category: String!
   description: String
-  createdAt: AWSDateTime!
-  updatedAt: AWSDateTime!
 }

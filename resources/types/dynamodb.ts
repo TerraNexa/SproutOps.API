@@ -177,6 +177,7 @@ export interface JobCrewAssignmentItem {
   entityType: "JOB_CREW_ASSIGNMENT";
   jobId: string;
   crewId: string;
+  businessId: string;
   assignedAt: string; // ISO timestamp
   GSI1PK: `CREW#${string}`;
   GSI1SK: `JOB#${string}`;
