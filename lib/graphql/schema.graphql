@@ -885,6 +885,7 @@ type Business {
   equipment: [Equipment!]!
   invoices: [Invoice!]!
   proposals: [Proposal!]!
+  payments: [Payment!]!
   recurringJobs: [RecurringJob!]!
   materials: [Material!]!
   expenses: [Expense!]!
@@ -975,6 +976,7 @@ type Invoice {
   subTotal: Float!
   tax: Float!
   total: Float!
+  payment: Payment
 }
 
 type Payment {
