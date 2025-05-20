@@ -228,6 +228,7 @@ export interface PaymentItem extends BaseItem {
   SK: `PAY#${string}`;
   paymentId: string;
   invoiceId: string;
+  businessId: string;
   customerId: string;
   amount: number;
   method: string;

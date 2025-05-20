@@ -266,6 +266,7 @@ export function generateMockData(): Record<string, any>[] {
       SK: `PAY#${paymentId}`,
       entityType: "PAYMENT",
       paymentId,
+      businessId,
       invoiceId,
       customerId,
       amount: [99, 126.5, 115.5][i],
